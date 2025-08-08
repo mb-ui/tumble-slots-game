@@ -23,7 +23,7 @@ Containers.prototype = {
             },
             op
         ));
-        con.setDepth(0);
+        con.setDepth(-1);
         this.list[columnIndex] = this.list[columnIndex] || [];
         this.list[columnIndex][order] = con;
     },
@@ -106,7 +106,7 @@ Containers.prototype = {
                 this._createContainer(columnIndex, i, {
                     offsetY: outsideCellOrder * Options.symbolHeight,
                     enableFallDetection: enableFallDetection && i === this.columnViewportLength - 1,
-                    onFall: () => { this._scene.score.calculate() }
+                    onFall: () => { this._scene.score.calculate(true) }
                 });
             }
         });

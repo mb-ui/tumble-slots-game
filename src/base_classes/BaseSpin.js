@@ -47,7 +47,7 @@ export default class BaseSpin {
         //     sixMealManSpine.animationState.setAnimation(0, "Idle Smile", true);
         // }
         //set money
-        this.scene.valueMoney -= (Options.coin * Options.line);
+        this.scene.valueMoney -= (Options.bet);
         this.scene.txtMoney.setText(this.scene.valueMoney + '$');
         //remove text txtwin
         if (this.scene.txtWin) {

@@ -25,31 +25,26 @@ export default class GameScene extends Phaser.Scene {
         Options.hsv = Phaser.Display.Color.HSVColorWheel();
         //add bg image
         const bg = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'bg.jpg');
-        bg.setDepth(0);
+        bg.setDepth(-1);
         //container
         this.containers = new Containers(this);
         //add image machine
         const machine = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'machine.png');
-        machine.setDepth(1);
+        machine.setDepth(0);
         // add Hero
         this.hero = this.add.spine(120, 580, "hero", "hero-atlas");
         this.hero.animationState.setAnimation(0, "idle", true);
-        this.hero.setDepth(2);
+        this.hero.setDepth(0);
         // Evalute
         this.score = new Score(this);
         //
-        this.valueMoney = localStorage.getItem('money') ? localStorage.getItem('money') :
-            Options.money;
+        this.valueMoney = Options.money;
         this.txtMoney = this.add.text(Config.width - 1050, Config.height - 695, this.valueMoney + '$', {
             fontSize: '30px',
             color: '#fff',
             fontFamily: 'PT Serif'
         });
         this.setTextX(this.valueMoney);
-        //Class Clock
-        this.times = new Time(this);
-        //Class Credit
-        this.credits = new Credit(this);
         //Add sound image
         const musicName = localStorage.getItem('music') ? localStorage.getItem('music')
             : 'btn_music_off.png';
@@ -65,23 +60,14 @@ export default class GameScene extends Phaser.Scene {
         if (this.audioMusicName === 'btn_music.png') {
             this.audioObject.musicDefault.play();
         }
-        //Class Coin
-        this.coin = new Coin(this);
-        //Class Line
-        this.btnLine = new Line(this);
         //Class Maxbet
         this.maxBet = new Maxbet(this);
         //Class Info
         this.info = new Info(this);
-        //Class AutoSpin
-        this.autoSpin = new AutoSpin(this);
         //Class BaseSpin
         this.baseSpin = new BaseSpin(this);
     }
     update() {
-        // this.player.x = 500;
-        // this.player.y = 320;
-        // this.player.anims.play('explode', true);
         this.containers.update();
     }
     onMusic() {
