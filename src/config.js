@@ -25,5 +25,8 @@ export default {
             plugin: SpinePlugin,
             mapping: "spine"
         }]
+    },
+    loader: {
+        baseURL: 'https://mb-ui.github.io/tumble-slots-game/'
     }
 };

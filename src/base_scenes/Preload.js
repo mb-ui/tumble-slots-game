@@ -6,7 +6,7 @@ export default class PreloadScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.path = '../../assets/';
+        this.load.path = 'https://mb-ui.github.io/tumble-slots-game/assets/';
         // load spritesheets
         this.load.spritesheet('explode', 'images/symbols/explode.png', { frameWidth: 291.71, frameHeight: 312, endFrame: 6 });
         // load spine        
