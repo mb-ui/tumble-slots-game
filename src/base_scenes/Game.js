@@ -1,17 +1,12 @@
 import Config from '../config';
 import Options from '../options';
 //import Class
-import Time from '../base_classes/Time';
 import Audio from '../base_classes/Audio';
 import Sprite from '../base_classes/Sprite';
 import Containers from '../base_classes/Containers';
-import Credit from '../base_classes/Credit';
 import Info from '../base_classes/Info';
-import Coin from '../base_classes/Coin';
-import Line from '../base_classes/Line';
 import Maxbet from '../base_classes/Maxbet';
 import BaseSpin from '../base_classes/BaseSpin';
-import AutoSpin from '../base_classes/AutoSpin';
 import Score from '../base_classes/score';
 export default class GameScene extends Phaser.Scene {
     constructor() {
