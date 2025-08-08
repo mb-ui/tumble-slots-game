@@ -12,8 +12,8 @@ export default class PreloadScene extends Phaser.Scene {
         // load spine        
         // this.load.spineJson("sixMealMan", "spine/Six_Meal_character_A_HQ.json");
         // this.load.spineAtlas("sixMealMan-atlas", "spine/Six_Meal_character_A_HQ.atlas");
-        this.load.spineJson("sixMealMan", "spine/hero/hero-pro.json");
-        this.load.spineAtlas("sixMealMan-atlas", "spine/hero/hero-pma.atlas");
+        this.load.spineJson("hero", "spine/hero/hero-pro.json");
+        this.load.spineAtlas("hero-atlas", "spine/hero/hero-pma.atlas");
         //load image
         this.load.atlas('logo', 'images/logo/logo.png', 'images/logo/logo.json');
         this.load.atlas('about', 'images/about/about.png', 'images/about/about.json');

@@ -30,7 +30,10 @@ export default class GameScene extends Phaser.Scene {
         //add image machine
         const machine = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'machine.png');
         machine.setDepth(1);
-
+        // add Hero
+        this.hero = this.add.spine(120, 580, "hero", "hero-atlas");
+        this.hero.animationState.setAnimation(0, "idle", true);
+        this.hero.setDepth(2);
         //
         this.valueMoney = localStorage.getItem('money') ? localStorage.getItem('money') :
             Options.money;
