@@ -12,6 +12,7 @@ import Line from '../base_classes/Line';
 import Maxbet from '../base_classes/Maxbet';
 import BaseSpin from '../base_classes/BaseSpin';
 import AutoSpin from '../base_classes/AutoSpin';
+import Score from '../base_classes/score';
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'Game' });
@@ -34,6 +35,8 @@ export default class GameScene extends Phaser.Scene {
         this.hero = this.add.spine(120, 580, "hero", "hero-atlas");
         this.hero.animationState.setAnimation(0, "idle", true);
         this.hero.setDepth(2);
+        // Evalute
+        this.score = new Score(this);
         //
         this.valueMoney = localStorage.getItem('money') ? localStorage.getItem('money') :
             Options.money;

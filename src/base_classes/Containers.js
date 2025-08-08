@@ -1,6 +1,7 @@
 import Config from '../config';
 import Container from "./Container";
 import Options from '../options';
+let firstReel = true;
 function Containers(scene) {
     this._diffTime = 50;
     this._scene = scene;
@@ -34,12 +35,24 @@ Containers.prototype = {
                 enableFallDetection: i === 0,
                 onFall: () => {
                     if (i === 0) {
+                        if (columnIndex === this._xColumns.length - 1) {
+                            this._onReady();
+                        }
                         columnIndex++;
                         columnIndex <= this._xColumns.length - 1 && this.createContainers(columnIndex);
                     }
                 }
             }
         ));
+    },
+    /** fired when last container has fall */
+    _onReady: function () {
+        if (firstReel == false) {
+            this._scene.score.calculate();
+        } else {
+            this._scene.baseSpin.ready();
+        }
+        firstReel = false;
     },
     _onEmpty: function (columnIndex, order) {
         if (columnIndex === 4 && order === this._columnLength - 1) {
@@ -55,18 +68,20 @@ Containers.prototype = {
         this.list.forEach(cons => cons.forEach(con => con && con.update()));
     },
     getContainer: function (columnIndex, order) { return this.list[columnIndex][order]; },
-    tumbles: function () {
+    tumbles: function (arr) {
         this.list.forEach((cons, columnIndex) => {
             const needTumble = cons.some((value) => value == null);
             if (needTumble) {
-                this._tumble(columnIndex,
+                this._tumble(
+                    columnIndex,
                     cons.map((value, i) => ({ value, order: i }))
-                        .filter(({ value, order }) => value && (order < this._columnViewportLength))
+                        .filter(({ value, order }) => value && (order < this._columnViewportLength)),
+                    columnIndex == arr[arr.length - 1].columnIndex
                 );
             }
         });
     },
-    _tumble: function (columnIndex, remainedCells) {
+    _tumble: function (columnIndex, remainedCells, enableFallDetection) {
         let outsideCellOrder = 0;
         Array.from({ length: this._columnViewportLength }).map((value, i) => i).forEach((i) => {
             const remainCell = remainedCells[i];
@@ -85,7 +100,11 @@ Containers.prototype = {
                 }
             } else {
                 outsideCellOrder++;
-                this._createContainer(columnIndex, i, { offsetY: outsideCellOrder * Options.symbolHeight });
+                this._createContainer(columnIndex, i, {
+                    offsetY: outsideCellOrder * Options.symbolHeight,
+                    enableFallDetection: enableFallDetection && i === this._columnViewportLength - 1,
+                    onFall: () => { debugger; this._scene.score.calculate() }
+                });
             }
         });
     }
