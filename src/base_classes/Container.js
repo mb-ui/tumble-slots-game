@@ -17,6 +17,7 @@ export default class Container extends Phaser.GameObjects.Container {
                 columnIndex: 0,
                 offsetY: 0,
                 imgName: '',
+                enableFallDetection: false,
                 onFall: () => { },
             },
             op);
@@ -61,7 +62,7 @@ export default class Container extends Phaser.GameObjects.Container {
                     this.remove(symbol, true);
                     this.options.onEmpty(this.options.columnIndex, this.options.order);
                 }
-            } else if (this.first && this._fall) {
+            } else if (this.options.enableFallDetection && this.first && this._fall) {
                 ///////// detect when the symbol has finished its fall ///////////
                 const symbol = this.first;
                 const childMatrix = symbol.getWorldTransformMatrix();

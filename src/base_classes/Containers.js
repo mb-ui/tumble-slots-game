@@ -31,6 +31,7 @@ Containers.prototype = {
             columnIndex,
             i,
             {
+                enableFallDetection: i === 0,
                 onFall: () => {
                     if (i === 0) {
                         columnIndex++;
