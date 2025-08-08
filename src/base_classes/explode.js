@@ -30,7 +30,7 @@ function Explode(scene, obj, options = {}) {
                 this._options.onDestroy();
             }
         });
-    }, 850);
+    }, 500);
 }
 Explode.prototype = {};
 export default explode;

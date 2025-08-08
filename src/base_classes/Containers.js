@@ -106,7 +106,7 @@ Containers.prototype = {
                 this._createContainer(columnIndex, i, {
                     offsetY: outsideCellOrder * Options.symbolHeight,
                     enableFallDetection: enableFallDetection && i === this.columnViewportLength - 1,
-                    onFall: () => { this._scene.score.calculate(true) }
+                    onFall: () => { setTimeout(() => { this._scene.score.calculate(true) }, 500) }
                 });
             }
         });
