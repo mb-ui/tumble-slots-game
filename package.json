@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack/prod.js ",
     "start": "webpack-dev-server --config webpack/base.js",
-    "deploy": "gh-pages -d demo"
+    "deploy": "gh-pages -d build"
   },
   "repository": {
     "type": "git",
