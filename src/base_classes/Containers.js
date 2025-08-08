@@ -7,7 +7,7 @@ function Containers(scene) {
     this._scene = scene;
     this.list = [];
     this._columnLength = 13;
-    this._columnViewportLength = 3;
+    this.columnViewportLength = 3;
     this._xColumns = [{ x: 940, y: 90 }, { y: 90, x: 790 }, { y: 90, x: 640 }, { y: 90, x: 490 }, { y: 90, x: 340 }];
     this.createContainers();
 }
@@ -26,6 +26,9 @@ Containers.prototype = {
         con.setDepth(0);
         this.list[columnIndex] = this.list[columnIndex] || [];
         this.list[columnIndex][order] = con;
+    },
+    loop: function (callback) {
+        this.list.forEach(con => con.forEach((value, i) => callback(value, i)));
     },
     createContainers: function (columnIndex = 0) {
         Array.from({ length: 13 }).map((value, i) => i).forEach((i) => this._createContainer(
@@ -75,7 +78,7 @@ Containers.prototype = {
                 this._tumble(
                     columnIndex,
                     cons.map((value, i) => ({ value, order: i }))
-                        .filter(({ value, order }) => value && (order < this._columnViewportLength)),
+                        .filter(({ value, order }) => value && (order < this.columnViewportLength)),
                     columnIndex == arr[arr.length - 1].columnIndex
                 );
             }
@@ -83,7 +86,7 @@ Containers.prototype = {
     },
     _tumble: function (columnIndex, remainedCells, enableFallDetection) {
         let outsideCellOrder = 0;
-        Array.from({ length: this._columnViewportLength }).map((value, i) => i).forEach((i) => {
+        Array.from({ length: this.columnViewportLength }).map((value, i) => i).forEach((i) => {
             const remainCell = remainedCells[i];
             if (remainCell) {
                 if (remainCell.order !== i) {
@@ -93,7 +96,7 @@ Containers.prototype = {
                     const transition = remainCell.order - i;
                     this._createContainer(columnIndex, i,
                         {
-                            offsetY: ((transition - (this._columnViewportLength - 1)) * Options.symbolHeight) + (Options.symbolHeight / 2),
+                            offsetY: ((transition - (this.columnViewportLength - 1)) * Options.symbolHeight) + (Options.symbolHeight / 2),
                             imgName: existingImgName
                         }
                     );
@@ -102,8 +105,8 @@ Containers.prototype = {
                 outsideCellOrder++;
                 this._createContainer(columnIndex, i, {
                     offsetY: outsideCellOrder * Options.symbolHeight,
-                    enableFallDetection: enableFallDetection && i === this._columnViewportLength - 1,
-                    onFall: () => { debugger; this._scene.score.calculate() }
+                    enableFallDetection: enableFallDetection && i === this.columnViewportLength - 1,
+                    onFall: () => { this._scene.score.calculate() }
                 });
             }
         });

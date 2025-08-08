@@ -23,7 +23,7 @@ function Explode(scene, obj, options = {}) {
         this._scene.tweens.add({
             targets: this.explode,
             alpha: 0,
-            duration: 300, // Duration in milliseconds
+            duration: 600, // Duration in milliseconds
             ease: 'Linear', // Optional easing function
             onComplete: () => {
                 this.explode.destroy();
