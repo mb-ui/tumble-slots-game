@@ -22,9 +22,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.atlas('bgButtons', 'images/buttons/button.png', 'images/buttons/button.json');
         this.load.atlas('symbols', 'images/symbols/symbols.png', 'images/symbols/symbols.json');
         this.load.atlas('symbols_blur', 'images/symbols/symbols_blur.png', 'images/symbols/symbols_blur.json');
-        this.load.atlas('line', 'images/lines/line.png', 'images/lines/line.json');
         this.load.atlas('sound', 'images/sound/sound.png', 'images/sound/sound.json');
-        this.load.atlas('autoSpin', 'images/autoSpin/auto.png', 'images/autoSpin/auto.json');
         this.load.bitmapFont('txt_bitmap', 'fonts/bitmap/text_slot_machine.png', 'fonts/bitmap/text_slot_machine.xml');
         //load audio
         this.load.audio('backgroundDefault', 'audio/background-default.mp3');
