@@ -27,6 +27,7 @@ export default class Container extends Phaser.GameObjects.Container {
         // adding floor
         this.floor = this._scene.physics.add.staticSprite(this.positionX, this.positionY + this.height, null);
         this.floor.setSize(this.width, 1);
+        this.floor.visible = false;
         // add symbol
         this.symbol = this._setEnableFallDetection(true).addSymbol(this.options.imgName);
     }
