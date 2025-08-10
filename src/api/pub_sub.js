@@ -36,10 +36,11 @@ const Pub_Sub = helper.module(
     },
     //oneSubscribe
     one: function (publisherName, fn) {
+      const that = this;
       if (typeof fn === 'function' && Object.prototype.hasOwnProperty.call(this._publishers, publisherName)) {
         const _fn = function () {
           fn.apply(this, arguments);
-          this.off(publisherName, _fn);
+          that.off(publisherName, _fn);
         };
         return this.on(publisherName, _fn);
       }

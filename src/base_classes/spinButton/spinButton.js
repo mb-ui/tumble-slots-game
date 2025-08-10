@@ -13,7 +13,8 @@ export default class BaseSpin {
         this.txtSpin.setDisplayCallback(this.scene.textCallback);
         this.SpinButton.on('pointerdown', () => { this.SpinButton.setScale(0.9); this.spin(); }, this);
         this.SpinButton.on('pointerup', () => this.SpinButton.setScale(1));
-        pub_sub.on('onReady', () => { this.ready(); });
+        const that = this;
+        pub_sub.one('onReady', function () { that.ready(); });
         pub_sub.on('onFail', () => { this.ready(); });
         this._pub_sub = pub_sub;
     }
