@@ -41,7 +41,7 @@ export default class Container extends Phaser.GameObjects.Container {
         // this.add(backgroundGraphics);
 
         this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
-        const symbol = this._scene.physics.add.sprite(this.width / 2, (-Options.symbolHeight * (this.options.order + 1)), 'symbols', this.imgName + '.png');
+        const symbol = this._scene.physics.add.sprite(this.width / 2, (-10 * (this.options.order + 1)), 'symbols', this.imgName + '.png');
         symbol.name = this.imgName;
         this.add(symbol);
         symbol.setCollideWorldBounds(false);
@@ -66,7 +66,7 @@ export default class Container extends Phaser.GameObjects.Container {
             // Create a tween that makes the sprite vibrate
             const vibrateTween = this._scene.tweens.add({
                 targets: this.symbol,
-                y: initialY - 0.001,  // Move up by 5 pixels
+                y: initialY - 10,  // Move up by 5 pixels
                 duration: 30,     // A very short duration for a fast movement
                 ease: 'Linear',   // A linear ease for a consistent vibration
                 yoyo: true,       // Move back down
@@ -74,7 +74,7 @@ export default class Container extends Phaser.GameObjects.Container {
             });
 
             // Create a timer event to stop the vibration after 1000ms (1 second)
-            this._scene.time.delayedCall(50, () => {
+            this._scene.time.delayedCall(70, () => {
                 vibrateTween.stop();
                 // Reset the sprite's position to its original y value to ensure it's not
                 // left at an offset after the tween is stopped.
