@@ -1,7 +1,6 @@
 import Preload from './base_scenes/Preload';
 import Boot from './base_scenes/Boot';
 import Game from './base_scenes/Game';
-import Test from './base_scenes/Test';
 import { SpinePlugin } from "@esotericsoftware/spine-phaser"
 export default {
     type: Phaser.WEBGL,
@@ -20,7 +19,7 @@ export default {
         min: 30,
         target: 60
     },
-    scene: [Preload, Test, Boot, Game],
+    scene: [Preload, Boot, Game],
     plugins: {
         scene: [{
             key: "spine.SpinePlugin",

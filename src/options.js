@@ -4,7 +4,8 @@ export default {
 	bet: 50,
 	txtSpin: 'SPIN',
 	txtAuto: 5,
-	symbolGravityY: 5000,
+	symbolCollisionGravity: 5000,
+	symbolFallGravity: 10000,
 	symbolBounce: 0,
 	txtMaxBet: 'MAXBET',
 	txtInfo: 'INFO',
@@ -31,5 +32,7 @@ export default {
 	slotGapY: 11,
 	slotsGapX: 31.3,
 	slotCapacity: 4,
-	slotsCount: 5
+	slotsCount: 5,
+	slotFallCount: 13,
+	slotsDelay: 100
 };

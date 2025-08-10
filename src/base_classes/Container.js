@@ -1,6 +1,8 @@
 import Options from '../options';
 export default class Container extends Phaser.GameObjects.Container {
-    constructor(scene, x, y, op = {}) {
+    constructor(scene, op) {
+        const x = op.x;
+        const y = op.y;
         super(scene, x, y);
         this._scene = scene;
         this.positionY = y;
@@ -8,14 +10,15 @@ export default class Container extends Phaser.GameObjects.Container {
         this.symbolHeight = Options.symbolHeight;
         this.height = Options.slotHeight;
         this.width = Options.slotWidth;
-        this._fall = true;
+        this._isFall = false;
         this.options = Object.assign({},
             {
                 onEmpty: () => { },
                 order: 0,
                 columnIndex: 0,
-                offsetY: 0,
                 imgName: '',
+                symbolX: Options.slotWidth / 2,
+                //symbolY: 0,
                 enableFallDetection: false,
                 onFall: () => { },
             },
@@ -29,7 +32,7 @@ export default class Container extends Phaser.GameObjects.Container {
         this.floor.setSize(this.width, 1);
         this.floor.visible = false;
         // add symbol
-        this.symbol = this._setEnableFallDetection(true).addSymbol(this.options.imgName);
+        this._setEnableFallDetection(true).addSymbol(this.options.imgName);
     }
     _setEnableFallDetection(value) {
         this.enableCollide = value;
@@ -42,11 +45,11 @@ export default class Container extends Phaser.GameObjects.Container {
         // this.add(backgroundGraphics);
 
         this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
-        const symbol = this._scene.physics.add.sprite(this.width / 2, (-10 * (this.options.order + 1)), 'symbols', this.imgName + '.png');
+        const symbol = this._scene.physics.add.sprite(this.options.symbolX, this.options.symbolY, 'symbols', this.imgName + '.png');
         symbol.name = this.imgName;
         this.add(symbol);
         symbol.setCollideWorldBounds(false);
-        symbol.body.setGravityY(Options.symbolGravityY);
+        symbol.body.setGravityY(Options.symbolCollisionGravity);
         symbol.body.setBounce(Options.symbolBounce);
         ////////
         this._scene.physics.add.collider(symbol, this.floor, (symbol) => {
@@ -55,13 +58,14 @@ export default class Container extends Phaser.GameObjects.Container {
             }
             symbol.isCollid = true;
         }, () => this.enableCollide);
-        return symbol;
+        this.symbol = symbol;
     }
     _randomBetween(min, max) {
         return Phaser.Math.Between(min, max);
     }
     _onCollide() {
-        if (!this._flag) {
+        if (!this._hasBounce) {
+            // create custom bounce effect for symbol
             const initialY = this.symbol.y;
 
             // Create a tween that makes the sprite vibrate
@@ -80,41 +84,39 @@ export default class Container extends Phaser.GameObjects.Container {
                 // Reset the sprite's position to its original y value to ensure it's not
                 // left at an offset after the tween is stopped.
                 this.symbol.y = initialY;
+                this.options.onFall();
             }, [], this);
         }
-        this._flag = true;
-        this.options.onFall();
+        this._hasBounce = true;
     }
     update() {
-        if (this.body && this.list.length) {
-            if (this.body.collideWorldBounds == false) {
-                ///// remove symbol which is out of container
-                const symbol = this.first;
-                const childMatrix = symbol.getWorldTransformMatrix();
-                const worldY = childMatrix.ty;
-                if (worldY > (this.positionY + this.height + Options.symbolHeight)) {
-                    this.remove(symbol, true);
-                    this.options.onEmpty(this.options.columnIndex, this.options.order);
-                }
-            } else if (this.options.enableFallDetection && this.first && this._fall) {
-                ///////// detect when the symbol has finished its fall ///////////
-                const symbol = this.first;
-                const childMatrix = symbol.getWorldTransformMatrix();
-                const worldY = childMatrix.ty;
-                if (
-                    worldY >= this.positionY + this.height - ((this.options.order + 1) * Options.symbolHeight) &&
-                    (this.first._lastWorldY == worldY)
-                ) {
-                    this._fall = false;
-                    this._onCollide();
-                } else {
-                    this.first._lastWorldY = worldY;
-                }
+        if (this.enableCollide == false) {
+            ///// remove symbol which is out of container
+            const symbol = this.symbol;
+            const childMatrix = symbol.getWorldTransformMatrix();
+            const worldY = childMatrix.ty;
+            if ((worldY > 0) && worldY > (Options.slotsY + Options.slotHeight + Options.symbolHeight)) {
+                this.remove(symbol, true);
+                this.options.onEmpty(this.options.columnIndex, this.options.order);
             }
+        } else if (this.options.enableFallDetection && this.symbol && !this._isFall) {
+            ///////// detect when the symbol has finished its fall ///////////
+            // const symbol = this.symbol;
+            // const childMatrix = symbol.getWorldTransformMatrix();
+            // const worldY = childMatrix.ty;
+            // if (
+            //     worldY >= this.positionY + this.height - ((this.options.order + 1) * Options.symbolHeight) &&
+            //     (this.symbol._lastWorldY == worldY)
+            // ) {
+            //     this._isFall = true;
+            //     //this._onCollide();
+            // } else {
+            //     this.symbol._lastWorldY = worldY;
+            // }
         }
     }
     empty() {
-        //this.first.animationState.setAnimation(0, "fall", true);
+        this.symbol.body.setGravityY(Options.symbolFallGravity);
         this._setEnableFallDetection(false);
     }
     destroy() {

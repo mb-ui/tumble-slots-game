@@ -9,13 +9,16 @@ function Containers(scene) {
 }
 Containers.prototype = {
     _createContainer: function (columnIndex, order, op) {
-        const x = Options.slotsX + (columnIndex * Options.slotWidth) + (columnIndex * Options.slotGapY);
-        const y = Options.slotsY - (order * Options.symbolHeight) - (order * Options.slotsGapX);
-        const con = new Container(this._scene, x, y, Object.assign(
+        const conX = Options.slotsX + (columnIndex * Options.slotWidth) + (columnIndex * Options.slotGapY);
+        const conY = Options.slotsY - (order * Options.symbolHeight) - (order * Options.slotsGapX);
+        const con = new Container(this._scene, Object.assign(
             {
                 columnIndex,
                 order,
-                offsetY: (order + 1) * Options.symbolHeight,
+                x: conX,
+                y: conY,
+                symbolX: Options.slotWidth / 2,
+                symbolY: -10 * (order + 1),
                 onEmpty: (columnIndex, order) => this._onEmpty(columnIndex, order)
             },
             op
@@ -28,7 +31,7 @@ Containers.prototype = {
         this.list.forEach(con => con.forEach((value, i) => callback(value, i)));
     },
     createContainers: function (columnIndex = 0) {
-        Array.from({ length: 4 }).map((value, i) => i).forEach((i) => this._createContainer(
+        Array.from({ length: Options.slotFallCount }).map((value, i) => i).forEach((i) => this._createContainer(
             columnIndex,
             i,
             {
@@ -45,7 +48,7 @@ Containers.prototype = {
         setTimeout(() => {
             columnIndex++;
             columnIndex <= Options.slotsCount - 1 && this.createContainers(columnIndex);
-        }, 100)
+        }, Options.slotsDelay)
     },
     /** fired when last container has fall */
     _onReady: function () {
@@ -57,14 +60,14 @@ Containers.prototype = {
         firstReel = false;
     },
     _onEmpty: function (columnIndex, order) {
-        if (columnIndex === 4 && order === this._columnLength - 1) {
+        if (columnIndex === Options.slotsCount - 1 && order === Options.slotFallCount - 1) {
             this.list.forEach(cons => cons.forEach(con => con.destroy()));
             this.list = [];
             this.createContainers();
         }
     },
     empty: function () {
-        this.list.forEach((cons, i) => setTimeout(() => { cons.forEach(con => con && con.empty()) }, i * this._diffTime))
+        this.list.forEach((cons, i) => setTimeout(() => { cons.forEach(con => con && con.empty()) }, i * 2 * Options.slotsDelay))
     },
     update: function () {
         this.list.forEach(cons => cons.forEach(con => con && con.update()));
@@ -88,14 +91,16 @@ Containers.prototype = {
         Array.from({ length: Options.slotCapacity }).map((value, i) => i).forEach((i) => {
             const remainCell = remainedCells[i];
             if (remainCell) {
-                if (remainCell.order !== i) {
-                    const con = this.list[columnIndex][remainCell.order];
-                    const existingImgName = con.imgName;
+                const con = this.list[columnIndex][remainCell.order];
+                const existingImgName = con.imgName;
+
+                const transition = remainCell.order - i;
+                if (transition > 0) {
+                    const oldOrder = transition;
                     con.destroy();
-                    const transition = remainCell.order - i;
                     this._createContainer(columnIndex, i,
                         {
-                            offsetY: ((transition - (Options.slotCapacity - 1)) * Options.symbolHeight) + (Options.symbolHeight / 2),
+                            symbolY: Options.slotHeight - (oldOrder * Options.symbolHeight) - ((oldOrder - 1) * Options.slotsGapX),
                             imgName: existingImgName
                         }
                     );
@@ -103,7 +108,7 @@ Containers.prototype = {
             } else {
                 outsideCellOrder++;
                 this._createContainer(columnIndex, i, {
-                    offsetY: outsideCellOrder * Options.symbolHeight,
+                    symbolY: -10 * (outsideCellOrder + 1),
                     enableFallDetection: enableFallDetection && i === Options.slotCapacity - 1,
                     onFall: () => { setTimeout(() => { this._scene.score.calculate(true) }, 500) }
                 });
