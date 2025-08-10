@@ -3,7 +3,7 @@ import Options from '../options';
 //import Class
 import Audio from '../base_classes/Audio';
 import Sprite from '../base_classes/Sprite';
-import Containers from '../base_classes/Containers';
+import Slots from '../base_classes/slots/slots.factory';
 import Info from '../base_classes/Info';
 import Maxbet from '../base_classes/Maxbet';
 import BaseSpin from '../base_classes/BaseSpin';
@@ -22,7 +22,7 @@ export default class GameScene extends Phaser.Scene {
         const bg = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'bg.jpg');
         bg.setDepth(-1);
         //container
-        this.containers = new Containers(this);
+        this.containers = new Slots(this);
         //add image machine
         const machine = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'machine.png');
         machine.setDepth(0);
