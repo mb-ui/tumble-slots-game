@@ -7,11 +7,12 @@ export default {
     parent: "slot-game-phaser3",
     width: 1280,
     height: 720,
+    //backgroundColor: '#ffffff',
     physics: {
         default: 'arcade',
         arcade: {
             debug: false,
-            gravity: { y: 5000 }
+            gravity: { y: 300 }
         }
     },
     fps: {

@@ -1,87 +1,123 @@
 import Options from '../options';
 export default class Container extends Phaser.GameObjects.Container {
-    constructor(scene, x, y, op = {}) {
-        y = 95;
+    constructor(scene, op) {
+        const x = op.x;
+        const y = op.y;
         super(scene, x, y);
         this._scene = scene;
         this.positionY = y;
         this.positionX = x;
         this.symbolHeight = Options.symbolHeight;
-        this.height = 470;
-        this.width = 140;
-        this._fall = true;
+        this.height = Options.slotHeight;
+        this.width = Options.slotWidth;
+        this._isFall = false;
         this.options = Object.assign({},
             {
                 onEmpty: () => { },
                 order: 0,
                 columnIndex: 0,
-                offsetY: 0,
                 imgName: '',
+                symbolX: Options.slotWidth / 2,
+                //symbolY: 0,
                 enableFallDetection: false,
                 onFall: () => { },
             },
             op);
+        // add container
         scene.add.existing(this);
-        scene.physics.add.existing(this);
-        scene.physics.world.enable(this);
-        this._setCollideWorldBounds(true);
-        this.body.setOffset(0, this.options.offsetY);
+        this._flag = false;
         this.setSize(this.width, this.height);
-        this.body.setSize(this.width, this.height - this.options.offsetY);
-        this.addSymbol(this.options.imgName);
+        // adding floor
+        this.floor = this._scene.physics.add.staticSprite(this.positionX, this.positionY + this.height, null);
+        this.floor.setSize(this.width, 1);
+        this.floor.visible = false;
+        // add symbol
+        this._setEnableFallDetection(true).addSymbol(this.options.imgName);
     }
-    _setCollideWorldBounds(value) {
-        this._scene.physics.world.gravity.y = value ? 100000 : 5000;
-        this.body.setBounce(value ? 0.5 : 0.15);
-        this.body.setCollideWorldBounds(value);
+    _setEnableFallDetection(value) {
+        this.enableCollide = value;
+        return this;
     }
     addSymbol(existingImgName) {
-        // const symbols1 = this._scene.add.spine(0, 0, "sixMealMan", "sixMealMan-atlas");
-        // symbols1.setScale(0.2);
-        // symbols1.animationState.setAnimation(0, "fall", true);
-        // symbols1.skeleton.slots[22].color.set(0, 1, 0, 1);
-        this.imgName = existingImgName || ('symbols_' + this.randomBetween(0, 9));
-        const symbol = this._scene.add.sprite(0, - (this.options.order * Options.symbolHeight), 'symbols', this.imgName + '.png');
+        // const backgroundGraphics = this._scene.add.graphics();
+        // backgroundGraphics.fillStyle(0x0000ff, 1); // Blue with full opacity
+        // backgroundGraphics.fillRect(0, 0, this.width, this.height);
+        // this.add(backgroundGraphics);
+
+        this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
+        const symbol = this._scene.physics.add.sprite(this.options.symbolX, this.options.symbolY, 'symbols', this.imgName + '.png');
+        symbol.name = this.imgName;
         this.add(symbol);
+        symbol.setCollideWorldBounds(false);
+        symbol.body.setGravityY(Options.symbolCollisionGravity);
+        symbol.body.setBounce(Options.symbolBounce);
+        ////////
+        this._scene.physics.add.collider(symbol, this.floor, (symbol) => {
+            if (!symbol.isCollid) {
+                this._onCollide();
+            }
+            symbol.isCollid = true;
+        }, () => this.enableCollide);
+        this.symbol = symbol;
     }
-    randomBetween(min, max) {
+    _randomBetween(min, max) {
         return Phaser.Math.Between(min, max);
     }
-    _onFall() {
-        //this.first.animationState.setAnimation(0, "idle", true);
-        this.options.onFall();
+    _onCollide() {
+        if (!this._hasBounce) {
+            // create custom bounce effect for symbol
+            const initialY = this.symbol.y;
+
+            // Create a tween that makes the sprite vibrate
+            const vibrateTween = this._scene.tweens.add({
+                targets: this.symbol,
+                y: initialY - 10,  // Move up by 5 pixels
+                duration: 30,     // A very short duration for a fast movement
+                ease: 'Linear',   // A linear ease for a consistent vibration
+                yoyo: true,       // Move back down
+                repeat: -1        // Repeat indefinitely
+            });
+
+            // Create a timer event to stop the vibration after 1000ms (1 second)
+            this._scene.time.delayedCall(70, () => {
+                vibrateTween.stop();
+                // Reset the sprite's position to its original y value to ensure it's not
+                // left at an offset after the tween is stopped.
+                this.symbol.y = initialY;
+                this.options.onFall();
+            }, [], this);
+        }
+        this._hasBounce = true;
     }
     update() {
-        if (this.body && this.list.length) {
-            if (this.body.collideWorldBounds == false) {
-                ///// remove symbol which is out of container
-                const symbol = this.first;
-                const childMatrix = symbol.getWorldTransformMatrix();
-                const worldY = childMatrix.ty;
-                if (worldY > (this.positionY + this.height + Options.symbolHeight)) {
-                    this.remove(symbol, true);
-                    this.options.onEmpty(this.options.columnIndex, this.options.order);
-                }
-            } else if (this.options.enableFallDetection && this.first && this._fall) {
-                ///////// detect when the symbol has finished its fall ///////////
-                const symbol = this.first;
-                const childMatrix = symbol.getWorldTransformMatrix();
-                const worldY = childMatrix.ty;
-                if (
-                    worldY >= this.positionY + this.height - ((this.options.order + 1) * Options.symbolHeight) &&
-                    (this.first._lastWorldY == worldY)
-                ) {
-                    this._fall = false;
-                    this._onFall();
-                } else {
-                    this.first._lastWorldY = worldY;
-                }
+        if (this.enableCollide == false) {
+            ///// remove symbol which is out of container
+            const symbol = this.symbol;
+            const childMatrix = symbol.getWorldTransformMatrix();
+            const worldY = childMatrix.ty;
+            if ((worldY > 0) && worldY > (Options.slotsY + Options.slotHeight + Options.symbolHeight)) {
+                this.remove(symbol, true);
+                this.options.onEmpty(this.options.columnIndex, this.options.order);
             }
+        } else if (this.options.enableFallDetection && this.symbol && !this._isFall) {
+            ///////// detect when the symbol has finished its fall ///////////
+            // const symbol = this.symbol;
+            // const childMatrix = symbol.getWorldTransformMatrix();
+            // const worldY = childMatrix.ty;
+            // if (
+            //     worldY >= this.positionY + this.height - ((this.options.order + 1) * Options.symbolHeight) &&
+            //     (this.symbol._lastWorldY == worldY)
+            // ) {
+            //     this._isFall = true;
+            //     //this._onCollide();
+            // } else {
+            //     this.symbol._lastWorldY = worldY;
+            // }
         }
     }
     empty() {
-        //this.first.animationState.setAnimation(0, "fall", true);
-        this._setCollideWorldBounds(false);
+        this.symbol.body.setGravityY(Options.symbolFallGravity);
+        this._setEnableFallDetection(false);
     }
     destroy() {
         const { columnIndex, order } = this.options;

@@ -13,7 +13,7 @@ Score.prototype = {
         //fill symbols
         cons.loop((con, i) => {
             const { order, columnIndex } = con.options;
-            if (order < cons.columnViewportLength) {
+            if (order < Options.slotCapacity) {
                 const imgName = con.imgName;
                 symbols[imgName] = symbols[imgName] || [];
                 symbols[imgName].push({ columnIndex, order, imgName });
@@ -48,6 +48,9 @@ Score.prototype = {
         return width;
     },
     win: function () {
+        if (!this._tempMony) {
+            return;
+        }
         this._scene.baseSpin.ready();
         // set txtWin
         this._scene.txtWin && this._scene.txtWin.destroy();

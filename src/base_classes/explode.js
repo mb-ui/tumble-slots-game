@@ -13,11 +13,13 @@ function Explode(scene, obj, options = {}) {
         const y = obj.positionY + obj.height - (obj.options.order * obj.symbolHeight) - (obj.symbolHeight / 2);
         this.explode = this._scene.physics.add.staticSprite(x, y, 'explode');
         this.explode.setDepth(2);
-        this._scene.anims.create({
-            key: 'explode',
-            frameRate: 10,
-            frames: this._scene.anims.generateFrameNumbers('explode')
-        });
+        if (!this._scene.anims.exists('explode')) {
+            this._scene.anims.create({
+                key: 'explode',
+                frameRate: 10,
+                frames: this._scene.anims.generateFrameNumbers('explode')
+            });
+        }
         this._obj.destroy();
         this.explode.anims.play('explode', false);
         this._scene.tweens.add({
@@ -30,7 +32,7 @@ function Explode(scene, obj, options = {}) {
                 this._options.onDestroy();
             }
         });
-    }, 850);
+    }, 500);
 }
 Explode.prototype = {};
 export default explode;

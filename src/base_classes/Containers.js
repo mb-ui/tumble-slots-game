@@ -1,4 +1,3 @@
-import Config from '../config';
 import Container from "./Container";
 import Options from '../options';
 let firstReel = true;
@@ -6,19 +5,20 @@ function Containers(scene) {
     this._diffTime = 50;
     this._scene = scene;
     this.list = [];
-    this._columnLength = 13;
-    this.columnViewportLength = 3;
-    this._xColumns = [{ x: 940, y: 90 }, { y: 90, x: 790 }, { y: 90, x: 640 }, { y: 90, x: 490 }, { y: 90, x: 340 }];
     this.createContainers();
 }
 Containers.prototype = {
     _createContainer: function (columnIndex, order, op) {
-        const { x, y } = this._xColumns[columnIndex];
-        const con = new Container(this._scene, Config.width - x, Config.height - y, Object.assign(
+        const conX = Options.slotsX + (columnIndex * Options.slotWidth) + (columnIndex * Options.slotGapY);
+        const conY = Options.slotsY - (order * Options.symbolHeight) - (order * Options.slotsGapX);
+        const con = new Container(this._scene, Object.assign(
             {
                 columnIndex,
                 order,
-                offsetY: (order + 1) * Options.symbolHeight,
+                x: conX,
+                y: conY,
+                symbolX: Options.slotWidth / 2,
+                symbolY: -10 * (order + 1),
                 onEmpty: (columnIndex, order) => this._onEmpty(columnIndex, order)
             },
             op
@@ -31,22 +31,24 @@ Containers.prototype = {
         this.list.forEach(con => con.forEach((value, i) => callback(value, i)));
     },
     createContainers: function (columnIndex = 0) {
-        Array.from({ length: 13 }).map((value, i) => i).forEach((i) => this._createContainer(
+        Array.from({ length: Options.slotFallCount }).map((value, i) => i).forEach((i) => this._createContainer(
             columnIndex,
             i,
             {
                 enableFallDetection: i === 0,
                 onFall: () => {
                     if (i === 0) {
-                        if (columnIndex === this._xColumns.length - 1) {
+                        if (columnIndex === Options.slotsCount - 1) {
                             this._onReady();
                         }
-                        columnIndex++;
-                        columnIndex <= this._xColumns.length - 1 && this.createContainers(columnIndex);
                     }
                 }
             }
         ));
+        setTimeout(() => {
+            columnIndex++;
+            columnIndex <= Options.slotsCount - 1 && this.createContainers(columnIndex);
+        }, Options.slotsDelay)
     },
     /** fired when last container has fall */
     _onReady: function () {
@@ -58,14 +60,14 @@ Containers.prototype = {
         firstReel = false;
     },
     _onEmpty: function (columnIndex, order) {
-        if (columnIndex === 4 && order === this._columnLength - 1) {
+        if (columnIndex === Options.slotsCount - 1 && order === Options.slotFallCount - 1) {
             this.list.forEach(cons => cons.forEach(con => con.destroy()));
             this.list = [];
             this.createContainers();
         }
     },
     empty: function () {
-        this.list.forEach((cons, i) => setTimeout(() => { cons.forEach(con => con && con.empty()) }, i * this._diffTime))
+        this.list.forEach((cons, i) => setTimeout(() => { cons.forEach(con => con && con.empty()) }, i * 2 * Options.slotsDelay))
     },
     update: function () {
         this.list.forEach(cons => cons.forEach(con => con && con.update()));
@@ -78,25 +80,27 @@ Containers.prototype = {
                 this._tumble(
                     columnIndex,
                     cons.map((value, i) => ({ value, order: i }))
-                        .filter(({ value, order }) => value && (order < this.columnViewportLength)),
-                    columnIndex == arr[arr.length - 1].columnIndex
+                        .filter(({ value, order }) => value && (order < Options.slotCapacity)),
+                    columnIndex == Options.slotsCount - 1
                 );
             }
         });
     },
     _tumble: function (columnIndex, remainedCells, enableFallDetection) {
         let outsideCellOrder = 0;
-        Array.from({ length: this.columnViewportLength }).map((value, i) => i).forEach((i) => {
+        Array.from({ length: Options.slotCapacity }).map((value, i) => i).forEach((i) => {
             const remainCell = remainedCells[i];
             if (remainCell) {
-                if (remainCell.order !== i) {
-                    const con = this.list[columnIndex][remainCell.order];
-                    const existingImgName = con.imgName;
+                const con = this.list[columnIndex][remainCell.order];
+                const existingImgName = con.imgName;
+
+                const transition = remainCell.order - i;
+                if (transition > 0) {
+                    const oldOrder = transition;
                     con.destroy();
-                    const transition = remainCell.order - i;
                     this._createContainer(columnIndex, i,
                         {
-                            offsetY: ((transition - (this.columnViewportLength - 1)) * Options.symbolHeight) + (Options.symbolHeight / 2),
+                            symbolY: Options.slotHeight - (oldOrder * Options.symbolHeight) - ((oldOrder - 1) * Options.slotsGapX),
                             imgName: existingImgName
                         }
                     );
@@ -104,9 +108,9 @@ Containers.prototype = {
             } else {
                 outsideCellOrder++;
                 this._createContainer(columnIndex, i, {
-                    offsetY: outsideCellOrder * Options.symbolHeight,
-                    enableFallDetection: enableFallDetection && i === this.columnViewportLength - 1,
-                    onFall: () => { this._scene.score.calculate(true) }
+                    symbolY: -10 * (outsideCellOrder + 1),
+                    enableFallDetection: enableFallDetection && i === Options.slotCapacity - 1,
+                    onFall: () => { setTimeout(() => { this._scene.score.calculate(true) }, 500) }
                 });
             }
         });
