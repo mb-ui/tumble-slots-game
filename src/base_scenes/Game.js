@@ -8,6 +8,7 @@ import Info from '../base_classes/Info';
 import Maxbet from '../base_classes/Maxbet';
 import SpinButton from '../base_classes/spinButton/spinButton.factory';
 import Score from '../base_classes/score';
+import CreditBoard from '../base_classes/creditBoard/creditBoard.factory';
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'Game' });
@@ -32,14 +33,6 @@ export default class GameScene extends Phaser.Scene {
         this.hero.setDepth(0);
         // Evalute
         this.score = new Score(this);
-        //
-        this.valueMoney = Options.money;
-        this.txtMoney = this.add.text(Config.width - 1050, Config.height - 695, this.valueMoney + '$', {
-            fontSize: '30px',
-            color: '#fff',
-            fontFamily: 'PT Serif'
-        });
-        this.setTextX(this.valueMoney);
         //Add sound image
         const musicName = localStorage.getItem('music') ? localStorage.getItem('music')
             : 'btn_music_off.png';
@@ -59,8 +52,8 @@ export default class GameScene extends Phaser.Scene {
         this.maxBet = new Maxbet(this);
         //Class Info
         this.info = new Info(this);
-        //Class SpinButton
-        this.baseSpin = new SpinButton(this);
+        new SpinButton(this);
+        new CreditBoard(this);
     }
     update() {
         this.containers.update();
@@ -114,17 +107,7 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    setTextX(value) {
-        if (value >= 100000000) this.txtMoney.x = 217;
-        else if (value >= 10000000) this.txtMoney.x = 220;
-        else if (value >= 1000000) this.txtMoney.x = 230;
-        else if (value >= 100000) this.txtMoney.x = 240;
-        else if (value >= 10000) this.txtMoney.x = 240;
-        else if (value >= 1000) this.txtMoney.x = 250;
-        else if (value >= 100) this.txtMoney.x = 260;
-        else if (value >= 10) this.txtMoney.x = 270;
-        else this.txtMoney.x = 280;
-    }
+
 
     textCallback(data) {
         data.tint.topLeft = Options.hsv[Math.floor(Options.i)].color;

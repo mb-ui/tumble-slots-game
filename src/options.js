@@ -1,6 +1,6 @@
 //Options
 export default {
-	money: 100000,
+	credit: 100000,
 	bet: 50,
 	txtSpin: 'SPIN',
 	txtAuto: 5,
