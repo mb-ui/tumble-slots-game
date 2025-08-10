@@ -4,6 +4,8 @@ export default {
 	bet: 50,
 	txtSpin: 'SPIN',
 	txtAuto: 5,
+	symbolGravityY: 5000,
+	symbolBounce: 0.35,
 	txtMaxBet: 'MAXBET',
 	txtInfo: 'INFO',
 	hsv: [],
@@ -20,5 +22,14 @@ export default {
 		[0, 10, 20],
 		[0, 8, 18]
 	],
-	symbolHeight: 150,
+	symbolHeight: 94,
+	symbolWidth: 112,
+	slotHeight: 470,
+	slotWidth: 140,
+	slotsY: 95,
+	slotsX: 270,
+	slotGapY: 11,
+	slotsGapX: 31.3,
+	slotCapacity: 4,
+	slotsCount: 5
 };

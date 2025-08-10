@@ -1,14 +1,13 @@
 import Options from '../options';
 export default class Container extends Phaser.GameObjects.Container {
     constructor(scene, x, y, op = {}) {
-        y = 95;
         super(scene, x, y);
         this._scene = scene;
         this.positionY = y;
         this.positionX = x;
         this.symbolHeight = Options.symbolHeight;
-        this.height = 470;
-        this.width = 140;
+        this.height = Options.slotHeight;
+        this.width = Options.slotWidth;
         this._fall = true;
         this.options = Object.assign({},
             {
@@ -21,34 +20,69 @@ export default class Container extends Phaser.GameObjects.Container {
                 onFall: () => { },
             },
             op);
+        // add container
         scene.add.existing(this);
-        scene.physics.add.existing(this);
-        scene.physics.world.enable(this);
-        this._setCollideWorldBounds(true);
-        this.body.setOffset(0, this.options.offsetY);
+        this._flag = false;
         this.setSize(this.width, this.height);
-        this.body.setSize(this.width, this.height - this.options.offsetY);
-        this.addSymbol(this.options.imgName);
+        // adding floor
+        this.floor = this._scene.physics.add.staticSprite(this.positionX, this.positionY + this.height, null);
+        this.floor.setSize(this.width, 1);
+        // add symbol
+        this.symbol = this._setEnableFallDetection(true).addSymbol(this.options.imgName);
     }
-    _setCollideWorldBounds(value) {
-        this._scene.physics.world.gravity.y = value ? 100000 : 5000;
-        this.body.setBounce(value ? 0.5 : 0.15);
-        this.body.setCollideWorldBounds(value);
+    _setEnableFallDetection(value) {
+        this.enableCollide = value;
+        return this;
     }
     addSymbol(existingImgName) {
-        // const symbols1 = this._scene.add.spine(0, 0, "sixMealMan", "sixMealMan-atlas");
-        // symbols1.setScale(0.2);
-        // symbols1.animationState.setAnimation(0, "fall", true);
-        // symbols1.skeleton.slots[22].color.set(0, 1, 0, 1);
-        this.imgName = existingImgName || ('symbols_' + this.randomBetween(0, 9));
-        const symbol = this._scene.add.sprite(0, - (this.options.order * Options.symbolHeight), 'symbols', this.imgName + '.png');
+        // const backgroundGraphics = this._scene.add.graphics();
+        // backgroundGraphics.fillStyle(0x0000ff, 1); // Blue with full opacity
+        // backgroundGraphics.fillRect(0, 0, this.width, this.height);
+        // this.add(backgroundGraphics);
+
+        this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
+        const symbol = this._scene.physics.add.sprite(this.width / 2, -Options.symbolHeight, 'symbols', this.imgName + '.png');
+        symbol.name = this.imgName;
         this.add(symbol);
+        symbol.setCollideWorldBounds(false);
+        symbol.body.setGravityY(Options.symbolGravityY - (this.options.order * 300));
+        //symbol.body.setBounce(Options.symbolBounce - (this.options.order * 0.01));
+        symbol.body.setBounce(0);
+        ////////
+        this._scene.physics.add.collider(symbol, this.floor, (symbol) => {
+            if (!symbol.isCollid) {
+                this._onCollide();
+            }
+            symbol.isCollid = true;
+        }, () => this.enableCollide);
+        return symbol;
     }
-    randomBetween(min, max) {
+    _randomBetween(min, max) {
         return Phaser.Math.Between(min, max);
     }
-    _onFall() {
-        //this.first.animationState.setAnimation(0, "idle", true);
+    _onCollide() {
+        if (!this._flag) {
+            const initialY = this.symbol.y;
+
+            // Create a tween that makes the sprite vibrate
+            const vibrateTween = this._scene.tweens.add({
+                targets: this.symbol,
+                y: initialY - 5,  // Move up by 5 pixels
+                duration: 50,     // A very short duration for a fast movement
+                ease: 'Linear',   // A linear ease for a consistent vibration
+                yoyo: true,       // Move back down
+                repeat: -1        // Repeat indefinitely
+            });
+
+            // Create a timer event to stop the vibration after 1000ms (1 second)
+            this._scene.time.delayedCall(150, () => {
+                vibrateTween.stop();
+                // Reset the sprite's position to its original y value to ensure it's not
+                // left at an offset after the tween is stopped.
+                this.symbol.y = initialY;
+            }, [], this);
+        }
+        this._flag = true;
         this.options.onFall();
     }
     update() {
@@ -72,7 +106,7 @@ export default class Container extends Phaser.GameObjects.Container {
                     (this.first._lastWorldY == worldY)
                 ) {
                     this._fall = false;
-                    this._onFall();
+                    this._onCollide();
                 } else {
                     this.first._lastWorldY = worldY;
                 }
@@ -81,7 +115,7 @@ export default class Container extends Phaser.GameObjects.Container {
     }
     empty() {
         //this.first.animationState.setAnimation(0, "fall", true);
-        this._setCollideWorldBounds(false);
+        this._setEnableFallDetection(false);
     }
     destroy() {
         const { columnIndex, order } = this.options;
