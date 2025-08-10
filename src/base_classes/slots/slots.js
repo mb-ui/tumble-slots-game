@@ -1,15 +1,18 @@
-let firstReel = true;
 /**
  * 
  * @param {any} scene 
- * @param {{globalOptions,Slot}} deps 
+ * @param {()=>{globalOptions,Slot,pub_sub}} deps 
  */
 function Slots(deps, scene) {
-    this._globalOptions = deps.globalOptions;
-    this.Slot = deps.Slot;
+    const { Slot, pub_sub, globalOptions } = deps();
+    this._globalOptions = globalOptions;
+    this.Slot = Slot;
     this._scene = scene;
     this.list = [];
     this.createContainers();
+    this._pub_sub = pub_sub;
+    pub_sub.on('onSpin', () => { this.empty(); });
+    pub_sub.on('onWin', (candidates) => { this.tumbles(candidates); });
 }
 Slots.prototype = {
     _createContainer: function (columnIndex, order, op) {
@@ -41,10 +44,8 @@ Slots.prototype = {
             {
                 enableFallDetection: i === 0,
                 onCollide: () => {
-                    if (i === 0) {
-                        if (columnIndex === this._globalOptions.slotsCount - 1) {
-                            this._onReady();
-                        }
+                    if (i === 0 && columnIndex === this._globalOptions.slotsCount - 1) {
+                        this._onReady();
                     }
                 }
             }
@@ -56,12 +57,7 @@ Slots.prototype = {
     },
     /** fired when last container has fall */
     _onReady: function () {
-        if (firstReel == false) {
-            this._scene.score.calculate();
-        } else {
-            this._scene.baseSpin.ready();
-        }
-        firstReel = false;
+        this._pub_sub.trigger('onReady');
     },
     _onFall: function (con) {
         const { columnIndex, order } = con.options;
