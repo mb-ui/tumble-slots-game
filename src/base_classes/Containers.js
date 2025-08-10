@@ -81,7 +81,7 @@ Containers.prototype = {
                     columnIndex,
                     cons.map((value, i) => ({ value, order: i }))
                         .filter(({ value, order }) => value && (order < Options.slotCapacity)),
-                    columnIndex == arr[arr.length - 1].columnIndex
+                    columnIndex == Options.slotsCount - 1
                 );
             }
         });
