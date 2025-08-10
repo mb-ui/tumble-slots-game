@@ -6,7 +6,7 @@ import Sprite from '../base_classes/Sprite';
 import Slots from '../base_classes/slots/slots.factory';
 import Info from '../base_classes/Info';
 import Maxbet from '../base_classes/Maxbet';
-import BaseSpin from '../base_classes/BaseSpin';
+import SpinButton from '../base_classes/spinButton/spinButton.factory';
 import Score from '../base_classes/score';
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -59,8 +59,8 @@ export default class GameScene extends Phaser.Scene {
         this.maxBet = new Maxbet(this);
         //Class Info
         this.info = new Info(this);
-        //Class BaseSpin
-        this.baseSpin = new BaseSpin(this);
+        //Class SpinButton
+        this.baseSpin = new SpinButton(this);
     }
     update() {
         this.containers.update();
