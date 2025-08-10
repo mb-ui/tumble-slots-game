@@ -5,7 +5,7 @@ export default {
 	txtSpin: 'SPIN',
 	txtAuto: 5,
 	symbolGravityY: 5000,
-	symbolBounce: 0.35,
+	symbolBounce: 0,
 	txtMaxBet: 'MAXBET',
 	txtInfo: 'INFO',
 	hsv: [],

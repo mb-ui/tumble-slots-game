@@ -38,12 +38,14 @@ Containers.prototype = {
                         if (columnIndex === Options.slotsCount - 1) {
                             this._onReady();
                         }
-                        columnIndex++;
-                        columnIndex <= Options.slotsCount - 1 && this.createContainers(columnIndex);
                     }
                 }
             }
         ));
+        setTimeout(() => {
+            columnIndex++;
+            columnIndex <= Options.slotsCount - 1 && this.createContainers(columnIndex);
+        }, 100)
     },
     /** fired when last container has fall */
     _onReady: function () {

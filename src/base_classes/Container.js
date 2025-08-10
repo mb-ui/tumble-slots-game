@@ -41,13 +41,12 @@ export default class Container extends Phaser.GameObjects.Container {
         // this.add(backgroundGraphics);
 
         this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
-        const symbol = this._scene.physics.add.sprite(this.width / 2, -Options.symbolHeight, 'symbols', this.imgName + '.png');
+        const symbol = this._scene.physics.add.sprite(this.width / 2, (-Options.symbolHeight * (this.options.order + 1)), 'symbols', this.imgName + '.png');
         symbol.name = this.imgName;
         this.add(symbol);
         symbol.setCollideWorldBounds(false);
-        symbol.body.setGravityY(Options.symbolGravityY - (this.options.order * 300));
-        //symbol.body.setBounce(Options.symbolBounce - (this.options.order * 0.01));
-        symbol.body.setBounce(0);
+        symbol.body.setGravityY(Options.symbolGravityY);
+        symbol.body.setBounce(Options.symbolBounce);
         ////////
         this._scene.physics.add.collider(symbol, this.floor, (symbol) => {
             if (!symbol.isCollid) {
@@ -67,15 +66,15 @@ export default class Container extends Phaser.GameObjects.Container {
             // Create a tween that makes the sprite vibrate
             const vibrateTween = this._scene.tweens.add({
                 targets: this.symbol,
-                y: initialY - 5,  // Move up by 5 pixels
-                duration: 50,     // A very short duration for a fast movement
+                y: initialY - 0.001,  // Move up by 5 pixels
+                duration: 30,     // A very short duration for a fast movement
                 ease: 'Linear',   // A linear ease for a consistent vibration
                 yoyo: true,       // Move back down
                 repeat: -1        // Repeat indefinitely
             });
 
             // Create a timer event to stop the vibration after 1000ms (1 second)
-            this._scene.time.delayedCall(150, () => {
+            this._scene.time.delayedCall(50, () => {
                 vibrateTween.stop();
                 // Reset the sprite's position to its original y value to ensure it's not
                 // left at an offset after the tween is stopped.
