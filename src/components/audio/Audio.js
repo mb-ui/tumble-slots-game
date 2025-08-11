@@ -4,34 +4,39 @@ export default class Audio {
         this.scene = scene;
         this.scene.sound.stopAll();
         const { pub_sub, Config, Sprite, Options } = deps();
+        this._pub_sub = pub_sub;
+        this._config = Config;
+        this._Sprite = Sprite;
         this._options = Options;
-        let _muteMusic = false;
+        this._muteMusic = false;
         this._slotsState = 'ready';
         this.loadAudio();
-        this.btnMusic = new Sprite(scene, Config.width - 310, Config.height - 675, 'sound', "btn_sound.png");
+
+    }
+    createButton() {
+        this.btnMusic = new this._Sprite(this.scene, this._config.width - 310, this._config.height - 675, 'sound', "btn_sound.png");
         this.btnMusic.setScale(0.6);
-        this.btnMusic.on('pointerdown', () => { _muteMusic = !_muteMusic; this.onMusic(_muteMusic); });
-        pub_sub.on('onClick', () => { _muteMusic || this.audioButton.play(); });
-        pub_sub.on('onWin', () => { this._slotsState = 'win' });
-        pub_sub.on('onFail', () => { this._slotsState = 'fail' });
-        pub_sub.on('onSpin', () => { });
-        pub_sub.on('onCollide', ({ collision, slots, isLastCollide }) => {
-            if (_muteMusic == false && collision.order == 0 && this._slotsState != 'win') {
+        this.btnMusic.on('pointerdown', () => { this._muteMusic = !this._muteMusic; this.onMusic(); });
+        this._pub_sub.on('onClick', () => { this._muteMusic || this.audioButton.play(); });
+        this._pub_sub.on('onWin', () => { this._slotsState = 'win' });
+        this._pub_sub.on('onFail', () => { this._slotsState = 'fail' });
+        this._pub_sub.on('onSpin', () => { });
+        this._pub_sub.on('onCollide', ({ collision, slots, isLastCollide }) => {
+            if (this._muteMusic == false && collision.order == 0 && this._slotsState != 'win') {
                 this[`audioCollide${collision.columnIndex}`] && this[`audioCollide${collision.columnIndex}`].play();
             }
         });
-        pub_sub.on('onFall', (collision) => {
-            if (_muteMusic == false && collision.order == 0) {
+        this._pub_sub.on('onFall', (collision) => {
+            if (this._muteMusic == false && collision.order == 0) {
                 this[`audioFall${collision.columnIndex}`].play();
             }
         });
-        pub_sub.on('onPlus', () => { _muteMusic || this.audioWin.play(); });
-        pub_sub.on('onExplod', () => {
-            _muteMusic || this.explode0.play();
+        this._pub_sub.on('onPlus', () => { this._muteMusic || this.audioWin.play(); });
+        this._pub_sub.on('onExplod', () => {
+            this._muteMusic || this.explode0.play();
 
         });
     }
-
     loadAudio() {
         this.musicBackgroundDefault = this.scene.sound.add('backgroundDefault', {
             loop: true,
@@ -51,9 +56,9 @@ export default class Audio {
         this.audioWin = this.scene.sound.add('win', { loop: false });
         this.audioButton = this.scene.sound.add('button');
     }
-    onMusic(_muteMusic) {
-        if (_muteMusic) {
-            //this.scene.sound.stopAll();
+    onMusic() {
+        if (this._muteMusic) {
+            this.scene.sound.stopAll();
             this.btnMusic.setTexture('sound', "btn_sound_off.png");
         } else {
             this.btnMusic.setTexture('sound', "btn_sound.png");
