@@ -23,6 +23,7 @@ export default {
 		[0, 10, 20],
 		[0, 8, 18]
 	],
+	minSymbolIterate: 4,
 	symbolHeight: 94,
 	symbolWidth: 112,
 	slotHeight: 470,

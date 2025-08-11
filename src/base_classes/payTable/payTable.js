@@ -8,6 +8,7 @@ function PayTable(deps, scene) {
         pub_sub.on('onCollide', ({ collision, slots, isLastCollide }) => {
             if (!isLastCollide) { return; }
             const { condidates, iteratedSymbols } = this.calculate(slots);
+            debugger;
             const score = this._getScore(iteratedSymbols);
             score && pub_sub.trigger('onScore', this, () => [score]);
             if (condidates.length) {
@@ -31,7 +32,7 @@ PayTable.prototype = {
             }
         });
         //get symbols with more than 3 iteration
-        const iteratedSymbols = Object.values(symbols).filter((value) => value.length >= this._minTumbleCount);
+        const iteratedSymbols = Object.values(symbols).filter((value) => value.length >= this._globalOptions.minSymbolIterate);
         const result = iteratedSymbols.reduce((ac, value) => ac.concat(value), []);
         return { condidates: result, iteratedSymbols };
         // this._getScore(iteratedSymbols);
