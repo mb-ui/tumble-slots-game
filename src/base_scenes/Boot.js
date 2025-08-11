@@ -1,37 +1,37 @@
-import Sprite from '../components/Sprite';
+import Sprite from '../adapters/Sprite';
 import Audio from '../components/Audio';
 import Config from '../config';
 
 export default class BootScene extends Phaser.Scene {
     constructor() {
-        super({key: 'Boot'});
+        super({ key: 'Boot' });
     }
 
     create() {
         //Object scale
         const scaleObject = {
-            default : 1.2,
-            scale : 1.1,
-            scale2 : 1,
-            scale3 : 0.9
+            default: 1.2,
+            scale: 1.1,
+            scale2: 1,
+            scale3: 0.9
         };
         //Class Audio
         this.audioObject = new Audio(this);
         this.audioObject.musicBackgroundDefault.play();
         const bgloading = new Sprite(this, Config.width / 2, Config.height / 2, 'bgPreload', 'bg_menu.png');
-        const title = new Sprite(this, Config.width / 2, Config.height - 500, 
+        const title = new Sprite(this, Config.width / 2, Config.height - 500,
             'logo', 'logo_game.png').setScale(scaleObject.default);
         //timer event loop setScale
         const timer = this.time.addEvent({
             delay: 150,
             callback: () => {
-                if(title.scale === scaleObject.default) 
+                if (title.scale === scaleObject.default)
                     title.setScale(scaleObject.scale);
-                else if(title.scale === scaleObject.scale) 
+                else if (title.scale === scaleObject.scale)
                     title.setScale(scaleObject.scale2);
-                else if(title.scale === scaleObject.scale2) 
+                else if (title.scale === scaleObject.scale2)
                     title.setScale(scaleObject.scale3);
-                else 
+                else
                     title.setScale(scaleObject.default);
             },
             callbackScope: this,

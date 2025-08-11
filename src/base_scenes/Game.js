@@ -2,7 +2,7 @@ import Config from '../config';
 import Options from '../options';
 //import Class
 import Audio from '../components/Audio';
-import Sprite from '../components/Sprite';
+import Sprite from '../adapters/Sprite';
 import Slots from '../components/slots/slots.factory';
 import PayTable from '../components/payTable/payTable.factory';
 import Maxbet from '../components/Maxbet';
@@ -21,13 +21,11 @@ export default class GameScene extends Phaser.Scene {
         // bitmap text
         Options.hsv = Phaser.Display.Color.HSVColorWheel();
         //add bg image
-        const bg = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'bg.jpg');
-        bg.setDepth(-1);
+        new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'bg.jpg').setDepth(-1);
         //container
         this.slots = new Slots(this);
         //add image machine
-        const machine = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'machine.png');
-        machine.setDepth(0);
+        new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'machine.png').setDepth(0);
         // add Hero
         new Hero(this);
         //Add sound image
@@ -102,22 +100,5 @@ export default class GameScene extends Phaser.Scene {
         if (this.audioSoundName === 'btn_sound.png') {
             this.audioObject.audioButton.play();
         }
-    }
-
-
-
-    textCallback(data) {
-        data.tint.topLeft = Options.hsv[Math.floor(Options.i)].color;
-        data.tint.topRight = Options.hsv[359 - Math.floor(Options.i)].color;
-        data.tint.bottomLeft = Options.hsv[359 - Math.floor(Options.i)].color;
-        data.tint.bottomRight = Options.hsv[Math.floor(Options.i)].color;
-
-        Options.i += 0.05;
-
-        if (Options.i >= Options.hsv.length) {
-            Options.i = 0;
-        }
-
-        return data;
     }
 }
