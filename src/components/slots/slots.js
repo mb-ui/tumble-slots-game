@@ -22,7 +22,12 @@ Slots.prototype = {
         for (let i = 0, length = condidates.length, lastIndex = length - 1; i <= lastIndex; i++) {
             const { columnIndex, order } = condidates[i];
             const con = this.getContainer(columnIndex, order);
-            this._explod.explod(con, () => i == lastIndex && this.tumbles(condidates));
+            this._explod.explod(con, () => {
+                if (i == lastIndex) {
+                    this._pub_sub.trigger('onExplod');
+                    this.tumbles(condidates)
+                }
+            });
         }
     },
     _createSlot: function (columnIndex, order, op) {

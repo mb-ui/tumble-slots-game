@@ -1,6 +1,6 @@
 import globalOptions from '../../options';
 import Config from '../../config';
-import Sprite from '../Sprite';
+import Sprite from '../../adapters/Sprite';
 import pub_sub from '../../api/pub_sub';
 import PayTable from './payTable';
 import dialogInfo from './dialogInfo';

@@ -8,6 +8,7 @@ const Pub_Sub = helper.module(
       onSpin: [],
       onFall: [],
       onCollide: [],
+      onExplod: [],
       onScore: [],
       onWin: [],
       onFail: [],
