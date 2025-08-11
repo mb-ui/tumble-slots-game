@@ -20,12 +20,12 @@ export default class GameScene extends Phaser.Scene {
         this.slots = new Slots(this);
         new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'machine.png').setDepth(0);//add image machine
         new Hero(this);
-        new Audio(this);
         new Maxbet(this);
         new PayTable(this);
         new SpinButton(this);
         new CreditBoard(this);
         new ScoreBoard(this);
+        new Audio(this).createButton();
     }
     update() {
         this.slots.update();
