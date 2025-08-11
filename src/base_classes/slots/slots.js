@@ -54,7 +54,7 @@ Slots.prototype = {
             {
                 enableFallDetection: i === 0,
                 onCollide: () => {
-                    if (i === this._globalOptions.slotCapacity - 1 && columnIndex === this._globalOptions.slotsCount - 1) {
+                    if (i === 0 && columnIndex === this._globalOptions.slotsCount - 1) {
                         if (!this._isReady) {
                             this._isReady = true;
                             this._onReady();
