@@ -8,7 +8,6 @@ function PayTable(deps, scene) {
         pub_sub.on('onCollide', ({ collision, slots, isLastCollide }) => {
             if (!isLastCollide) { return; }
             const { condidates, iteratedSymbols } = this.calculate(slots);
-            debugger;
             const score = this._getScore(iteratedSymbols);
             score && pub_sub.trigger('onScore', this, () => [score]);
             if (condidates.length) {
