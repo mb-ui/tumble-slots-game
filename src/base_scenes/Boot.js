@@ -1,5 +1,5 @@
-import Sprite from '../base_classes/Sprite';
-import Audio from '../base_classes/Audio';
+import Sprite from '../components/Sprite';
+import Audio from '../components/Audio';
 import Config from '../config';
 
 export default class BootScene extends Phaser.Scene {

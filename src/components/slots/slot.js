@@ -87,7 +87,9 @@ export default class Slot extends Phaser.GameObjects.Container {
                 // Reset the sprite's position to its original y value to ensure it's not
                 // left at an offset after the tween is stopped.
                 this.symbol.y = initialY;
-                this.options.onCollide(this);
+                setTimeout(() => {
+                    this.options.onCollide(this);
+                }, 200);
             }, [], this);
         }
         this._hasBounce = true;
