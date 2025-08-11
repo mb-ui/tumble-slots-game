@@ -9,6 +9,7 @@ import Maxbet from '../components/Maxbet';
 import SpinButton from '../components/spinButton/spinButton.factory';
 import CreditBoard from '../components/creditBoard/creditBoard.factory';
 import ScoreBoard from '../components/scoreBoard/scoreBoard.factory';
+import Hero from '../components/hero/hero.factory';
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'Game' });
@@ -28,9 +29,7 @@ export default class GameScene extends Phaser.Scene {
         const machine = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'machine.png');
         machine.setDepth(0);
         // add Hero
-        this.hero = this.add.spine(120, 580, "hero", "hero-atlas");
-        this.hero.animationState.setAnimation(0, "idle", true);
-        this.hero.setDepth(0);
+        new Hero(this);
         //Add sound image
         const musicName = localStorage.getItem('music') ? localStorage.getItem('music')
             : 'btn_music_off.png';
