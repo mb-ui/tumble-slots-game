@@ -4,10 +4,6 @@ function PayTable(deps, scene) {
     this._globalOptions = globalOptions;
     this._config = Config;
     this._pub_sub = pub_sub;
-    //
-    this._minTumbleCount = 4;
-    this._tempMony = 0;
-    //
     pub_sub.one('onReady', () => {
         pub_sub.on('onCollide', ({ collision, slots, isLastCollide }) => {
             if (!isLastCollide) { return; }
@@ -50,54 +46,6 @@ PayTable.prototype = {
             score += payArray[payArrayIndex];
         })
         return score;
-    },
-    // _setTextWidthWin: function (monyWin) {
-    //     let width;
-    //     if (monyWin >= 100000)
-    //         width = this._config.width - 340;
-    //     else if (monyWin >= 10000)
-    //         width = this._config.width - 335;
-    //     else if (monyWin >= 1000)
-    //         width = this._config.width - 330;
-    //     else if (monyWin >= 100)
-    //         width = this._config.width - 322;
-    //     else
-    //         width = this._config.width - 340;
-    //     return width;
-    // },
-    // win: function () {
-    //     if (!this._tempMony) {
-    //         return;
-    //     }
-    //     this._scene.baseSpin.ready();
-    //     // set txtWin
-    //     this._scene.txtWin && this._scene.txtWin.destroy();
-    //     const width = this._setTextWidthWin(this._tempMony);
-    //     this._scene.txtWin = this._scene.add.text(width, this._config.height - 130, 'WIN: ' + this._tempMony + ' $ ', {
-    //         fontSize: '20px',
-    //         color: '#25a028',
-    //         fontFamily: 'PT Serif'
-    //     });
-    //     // set valueMoney
-    //     this._scene.valueMoney += (this._tempMony);
-    //     this._scene.txtMoney.setText(this._scene.valueMoney + '$');
-    //     this._tempMony = 0;
-    // },
-    // this._Explod: function(arr) {
-    //     for (let i = 0, length = arr.length, lastIndex = length - 1; i <= lastIndex; i++) {
-    //         const { columnIndex, order } = arr[i];
-    //         const con = this._scene.containers.getContainer(columnIndex, order);
-    //         this._Explod(this._scene, con, {
-    //             onDestroy: () => {
-    //                 i == lastIndex && this._scene.containers.tumbles(arr)
-    //             }
-    //         });
-    //     }
-    // },
-    // fail: function () {
-    //     this._scene.baseSpin.ready();
-    //     this._scene.txtWin && this._scene.txtWin.destroy();
-    //     this._tempMony = 0;
-    // },
+    }
 };
 export default PayTable;

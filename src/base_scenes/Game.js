@@ -8,6 +8,7 @@ import PayTable from '../base_classes/payTable/payTable.factory';
 import Maxbet from '../base_classes/Maxbet';
 import SpinButton from '../base_classes/spinButton/spinButton.factory';
 import CreditBoard from '../base_classes/creditBoard/creditBoard.factory';
+import ScoreBoard from '../base_classes/scoreBoard/scoreBoard.factory';
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'Game' });
@@ -22,7 +23,7 @@ export default class GameScene extends Phaser.Scene {
         const bg = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'bg.jpg');
         bg.setDepth(-1);
         //container
-        this.containers = new Slots(this);
+        this.slots = new Slots(this);
         //add image machine
         const machine = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'machine.png');
         machine.setDepth(0);
@@ -50,9 +51,10 @@ export default class GameScene extends Phaser.Scene {
         new PayTable(this);
         new SpinButton(this);
         new CreditBoard(this);
+        new ScoreBoard(this);
     }
     update() {
-        this.containers.update();
+        this.slots.update();
     }
     onMusic() {
         if (!Options.checkClick) {

@@ -111,6 +111,6 @@ export default class Slot extends Phaser.GameObjects.Container {
     destroy() {
         const { columnIndex, order } = this.options;
         super.destroy();
-        this._scene.containers.list[columnIndex][order] = null
+        this._scene.slots.list[columnIndex][order] = null
     }
 }
