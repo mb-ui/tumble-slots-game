@@ -4,18 +4,28 @@
  * @param {()=>{globalOptions,Slot,pub_sub}} deps 
  */
 function Slots(deps, scene) {
-    const { Slot, pub_sub, globalOptions } = deps();
+    const { Slot, pub_sub, globalOptions, explod } = deps(scene);
     this._globalOptions = globalOptions;
     this.Slot = Slot;
+    this._explod = explod;
     this._scene = scene;
     this.list = [];
-    this.createContainers();
+    this._isReady = false;
+    this._createSlots();
     this._pub_sub = pub_sub;
     pub_sub.on('onSpin', () => { this.empty(); });
-    pub_sub.on('onWin', (candidates) => { this.tumbles(candidates); });
+    const that = this;
+    pub_sub.on('onWin', (candidates) => { that._explods(candidates); });
 }
 Slots.prototype = {
-    _createContainer: function (columnIndex, order, op) {
+    _explods: function (condidates) {
+        for (let i = 0, length = condidates.length, lastIndex = length - 1; i <= lastIndex; i++) {
+            const { columnIndex, order } = condidates[i];
+            const con = this.getContainer(columnIndex, order);
+            this._explod.explod(con, () => i == lastIndex && this.tumbles(condidates));
+        }
+    },
+    _createSlot: function (columnIndex, order, op) {
         const conX = this._globalOptions.slotsX + (columnIndex * this._globalOptions.slotWidth) + (columnIndex * this._globalOptions.slotGapY);
         const conY = this._globalOptions.slotsY - (order * this._globalOptions.symbolHeight) - (order * this._globalOptions.slotsGapX);
         const con = new this.Slot(this._scene, Object.assign(
@@ -37,34 +47,44 @@ Slots.prototype = {
     loop: function (callback) {
         this.list.forEach(con => con.forEach((value, i) => callback(value, i)));
     },
-    createContainers: function (columnIndex = 0) {
-        Array.from({ length: this._globalOptions.slotFallCount }).map((value, i) => i).forEach((i) => this._createContainer(
+    _createSlots: function (columnIndex = 0) {
+        Array.from({ length: this._globalOptions.slotFallCount }).map((value, i) => i).forEach((i) => this._createSlot(
             columnIndex,
             i,
             {
                 enableFallDetection: i === 0,
                 onCollide: () => {
-                    if (i === 0 && columnIndex === this._globalOptions.slotsCount - 1) {
-                        this._onReady();
+                    if (i === this._globalOptions.slotCapacity - 1 && columnIndex === this._globalOptions.slotsCount - 1) {
+                        if (!this._isReady) {
+                            this._isReady = true;
+                            this._onReady();
+                        } else {
+                            this._onCollide({ columnIndex, order: i }, true);
+                        }
+                    } else {
+                        this._onCollide({ columnIndex, order: i }, false);
                     }
                 }
             }
         ));
         setTimeout(() => {
             columnIndex++;
-            columnIndex <= this._globalOptions.slotsCount - 1 && this.createContainers(columnIndex);
+            columnIndex <= this._globalOptions.slotsCount - 1 && this._createSlots(columnIndex);
         }, this._globalOptions.slotsDelay)
     },
     /** fired when last container has fall */
     _onReady: function () {
         this._pub_sub.trigger('onReady');
     },
+    _onCollide: function (collision, isLastCollide) {
+        this._pub_sub.trigger('onCollide', this, () => [{ collision, slots: this, isLastCollide }]);
+    },
     _onFall: function (con) {
         const { columnIndex, order } = con.options;
         if (columnIndex === this._globalOptions.slotsCount - 1 && order === this._globalOptions.slotFallCount - 1) {
             this.list.forEach(cons => cons.forEach(con => con.destroy()));
             this.list = [];
-            this.createContainers();
+            this._createSlots();
         }
     },
     empty: function () {
@@ -99,7 +119,7 @@ Slots.prototype = {
                 if (transition > 0) {
                     const oldOrder = transition;
                     con.destroy();
-                    this._createContainer(columnIndex, i,
+                    this._createSlot(columnIndex, i,
                         {
                             symbolY: this._globalOptions.slotHeight - (oldOrder * this._globalOptions.symbolHeight) - ((oldOrder - 1) * this._globalOptions.slotsGapX),
                             imgName: existingImgName
@@ -108,10 +128,14 @@ Slots.prototype = {
                 }
             } else {
                 outsideCellOrder++;
-                this._createContainer(columnIndex, i, {
+                this._createSlot(columnIndex, i, {
                     symbolY: -10 * (outsideCellOrder + 1),
                     enableFallDetection: enableFallDetection && i === this._globalOptions.slotCapacity - 1,
-                    onCollide: () => { setTimeout(() => { this._scene.score.calculate(true) }, 500) }
+                    onCollide: () => {
+                        setTimeout(() => {
+                            this._onCollide({ columnIndex, order: i }, i == this._globalOptions.slotCapacity - 1);
+                        }, 500)
+                    }
                 });
             }
         });

@@ -1,4 +1,3 @@
-import Options from '../../options';
 export default class Slot extends Phaser.GameObjects.Container {
     /**
      * 
@@ -16,6 +15,7 @@ export default class Slot extends Phaser.GameObjects.Container {
         this.positionX = x;
         this._globalOptions = globalOptions;
         this._isFall = false;
+        this.symbolHeight = this._globalOptions.symbolHeight;
         this.options = Object.assign({},
             {
                 onFall: () => { },
@@ -33,7 +33,9 @@ export default class Slot extends Phaser.GameObjects.Container {
         // add container
         scene.add.existing(this);
         this._flag = false;
-        this.setSize(this._globalOptions.slotWidth, this._globalOptions.slotHeight);
+        this.width = this._globalOptions.slotWidth;
+        this.height = this._globalOptions.slotHeight;
+        this.setSize(this.width, this.height);
         // adding floor
         this.floor = this._scene.physics.add.staticSprite(this.positionX, this.positionY + this._globalOptions.slotHeight, null);
         this.floor.setSize(this._globalOptions.slotWidth, 1);

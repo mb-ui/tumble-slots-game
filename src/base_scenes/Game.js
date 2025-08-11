@@ -4,10 +4,9 @@ import Options from '../options';
 import Audio from '../base_classes/Audio';
 import Sprite from '../base_classes/Sprite';
 import Slots from '../base_classes/slots/slots.factory';
-import Info from '../base_classes/Info';
+import PayTable from '../base_classes/payTable/payTable.factory';
 import Maxbet from '../base_classes/Maxbet';
 import SpinButton from '../base_classes/spinButton/spinButton.factory';
-import Score from '../base_classes/score';
 import CreditBoard from '../base_classes/creditBoard/creditBoard.factory';
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -31,8 +30,6 @@ export default class GameScene extends Phaser.Scene {
         this.hero = this.add.spine(120, 580, "hero", "hero-atlas");
         this.hero.animationState.setAnimation(0, "idle", true);
         this.hero.setDepth(0);
-        // Evalute
-        this.score = new Score(this);
         //Add sound image
         const musicName = localStorage.getItem('music') ? localStorage.getItem('music')
             : 'btn_music_off.png';
@@ -50,8 +47,7 @@ export default class GameScene extends Phaser.Scene {
         }
         //Class Maxbet
         this.maxBet = new Maxbet(this);
-        //Class Info
-        this.info = new Info(this);
+        new PayTable(this);
         new SpinButton(this);
         new CreditBoard(this);
     }
