@@ -26,12 +26,11 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.bitmapFont('txt_bitmap', 'fonts/bitmap/text_slot_machine.png', 'fonts/bitmap/text_slot_machine.xml');
         //load audio
         this.load.audio('backgroundDefault', 'audio/background-default.mp3');
-        this.load.audio('reels', 'audio/reels.mp3');
-        this.load.audio('reelStop', 'audio/reel_stop.mp3');
         this.load.audio('win', 'audio/win.mp3');
         this.load.audio('button', 'audio/button.mp3');
-        this.load.audio('lose', 'audio/lose.mp3');
-        this.load.audio('musicDefault', 'audio/music_default.mp3');
+        this.load.audio('bubble2', 'audio/bubble2.mp3');
+        this.load.audio('fall0', 'audio/fall0.mp3');
+        this.load.audio('explode0', 'audio/explode0.mp3');
 
         this.progressBar = this.add.graphics();
         this.progressBox = this.add.graphics();
