@@ -1,6 +1,6 @@
 //Options
 export default {
-	money: 100000,
+	credit: 100000,
 	bet: 50,
 	txtSpin: 'SPIN',
 	txtAuto: 5,
@@ -23,6 +23,7 @@ export default {
 		[0, 10, 20],
 		[0, 8, 18]
 	],
+	minSymbolIterate: 4,
 	symbolHeight: 94,
 	symbolWidth: 112,
 	slotHeight: 470,

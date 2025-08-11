@@ -3,11 +3,12 @@ import Options from '../options';
 //import Class
 import Audio from '../base_classes/Audio';
 import Sprite from '../base_classes/Sprite';
-import Containers from '../base_classes/Containers';
-import Info from '../base_classes/Info';
+import Slots from '../base_classes/slots/slots.factory';
+import PayTable from '../base_classes/payTable/payTable.factory';
 import Maxbet from '../base_classes/Maxbet';
-import BaseSpin from '../base_classes/BaseSpin';
-import Score from '../base_classes/score';
+import SpinButton from '../base_classes/spinButton/spinButton.factory';
+import CreditBoard from '../base_classes/creditBoard/creditBoard.factory';
+import ScoreBoard from '../base_classes/scoreBoard/scoreBoard.factory';
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'Game' });
@@ -22,7 +23,7 @@ export default class GameScene extends Phaser.Scene {
         const bg = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'bg.jpg');
         bg.setDepth(-1);
         //container
-        this.containers = new Containers(this);
+        this.slots = new Slots(this);
         //add image machine
         const machine = new Sprite(this, Config.width / 2, Config.height / 2, 'background', 'machine.png');
         machine.setDepth(0);
@@ -30,16 +31,6 @@ export default class GameScene extends Phaser.Scene {
         this.hero = this.add.spine(120, 580, "hero", "hero-atlas");
         this.hero.animationState.setAnimation(0, "idle", true);
         this.hero.setDepth(0);
-        // Evalute
-        this.score = new Score(this);
-        //
-        this.valueMoney = Options.money;
-        this.txtMoney = this.add.text(Config.width - 1050, Config.height - 695, this.valueMoney + '$', {
-            fontSize: '30px',
-            color: '#fff',
-            fontFamily: 'PT Serif'
-        });
-        this.setTextX(this.valueMoney);
         //Add sound image
         const musicName = localStorage.getItem('music') ? localStorage.getItem('music')
             : 'btn_music_off.png';
@@ -57,13 +48,13 @@ export default class GameScene extends Phaser.Scene {
         }
         //Class Maxbet
         this.maxBet = new Maxbet(this);
-        //Class Info
-        this.info = new Info(this);
-        //Class BaseSpin
-        this.baseSpin = new BaseSpin(this);
+        new PayTable(this);
+        new SpinButton(this);
+        new CreditBoard(this);
+        new ScoreBoard(this);
     }
     update() {
-        this.containers.update();
+        this.slots.update();
     }
     onMusic() {
         if (!Options.checkClick) {
@@ -114,17 +105,7 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    setTextX(value) {
-        if (value >= 100000000) this.txtMoney.x = 217;
-        else if (value >= 10000000) this.txtMoney.x = 220;
-        else if (value >= 1000000) this.txtMoney.x = 230;
-        else if (value >= 100000) this.txtMoney.x = 240;
-        else if (value >= 10000) this.txtMoney.x = 240;
-        else if (value >= 1000) this.txtMoney.x = 250;
-        else if (value >= 100) this.txtMoney.x = 260;
-        else if (value >= 10) this.txtMoney.x = 270;
-        else this.txtMoney.x = 280;
-    }
+
 
     textCallback(data) {
         data.tint.topLeft = Options.hsv[Math.floor(Options.i)].color;
