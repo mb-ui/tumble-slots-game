@@ -86,6 +86,7 @@ Slots.prototype = {
     },
     _onFall: function (con) {
         const { columnIndex, order } = con.options;
+        this._pub_sub.trigger('onFall', undefined, () => [{ columnIndex, order }]);
         if (columnIndex === this._globalOptions.slotsCount - 1 && order === this._globalOptions.slotFallCount - 1) {
             this.list.forEach(cons => cons.forEach(con => con.destroy()));
             this.list = [];
