@@ -1,3 +1,4 @@
+let flag = -1;
 export default class Slot extends Phaser.GameObjects.Container {
     /**
      * 
@@ -37,7 +38,7 @@ export default class Slot extends Phaser.GameObjects.Container {
         this.height = this._globalOptions.slotHeight;
         this.setSize(this.width, this.height);
         // adding floor
-        this.floor = this._scene.physics.add.staticSprite(this.positionX, this.positionY + this._globalOptions.slotHeight, null);
+        this.floor = this._scene.physics.add.staticSprite(this.positionX + this.width / 2, this.positionY + this._globalOptions.slotHeight, null);
         this.floor.setSize(this._globalOptions.slotWidth, 1);
         this.floor.visible = false;
         // add symbol
@@ -48,14 +49,26 @@ export default class Slot extends Phaser.GameObjects.Container {
         return this;
     }
     addSymbol(existingImgName) {
-        this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
-        const symbol = this._scene.physics.add.sprite(this.options.symbolX, this.options.symbolY, 'symbols', this.imgName + '.png');
+        flag++;
+        console.log(`symbol ${flag} columnIndex : ${this.options.columnIndex} order : ${this.options.order}`)
+        this.imgName = existingImgName || ('hero_' + this._randomBetween(0, 9));
+        const symbol = this._scene.add.spine(this.options.symbolX, this.options.symbolY, "hero", "hero-atlas");
+        symbol.animationState.setAnimation(0, "idle", true);
+        symbol.setScale(0.1);
+        symbol.skeleton.setSkinByName('Beardy');
+        this._scene.physics.add.existing(symbol);
+        //symbol.body.setOffset(0, 0);
+        symbol.body.setSize(this._globalOptions.symbolWidth, this._globalOptions.symbolHeight);
+        //
+        //this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
+        //const symbol = this._scene.physics.add.sprite(this.options.symbolX, this.options.symbolY, 'symbols', this.imgName + '.png');
         symbol.name = this.imgName;
         this.add(symbol);
-        symbol.setCollideWorldBounds(false);
+        symbol.body.setCollideWorldBounds(false);
         symbol.body.setGravityY(this._globalOptions.symbolCollisionGravity);
         symbol.body.setBounce(this._globalOptions.symbolBounce);
-        this._scene.physics.add.collider(symbol, this.floor, (symbol) => {
+        this._scene.physics.world.debugGraphic.visible = true;
+        this._scene.physics.add.collider(symbol.body, this.floor, (symbol) => {
             if (!symbol.isCollid) {
                 this._onCollide();
             }
