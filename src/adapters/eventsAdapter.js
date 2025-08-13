@@ -1,17 +1,26 @@
-class EventBus extends Phaser.Events.EventEmitter {
-    constructor() {
+import fsmAdapter from './fsmAdapter';
+export class EventBus extends Phaser.Events.EventEmitter {
+    constructor(fsmAdapter) {
         super();
+        this.fsm = fsmAdapter;
         /**contains all custom events through the App */
         this.eventsEnum = {
             /**this is initial event and indicates that initial slots animation has finished and slots are ready */
-            ready: "ready",
-            idle: "idle",
-            spinStart: "spinStart",
-            spinEnd: "spinEnd",
-            explodeStart: "explodeStart",
-            explodEnd: "explodEnd",
+            onReady: "onReady",
+            onIdle: "onIdle",
+            onReelsStart: "onReelsStart",
+            onReelsEnd: "onReelsEnd",
+            onLose: "onLose",
+            onWin: "onWin",
+            onTumpleStart: "onTumpleState",
+            onTumpleEnd: "onTumpleEnd",
+            onExplodeStart: "onExplodeStart",
+            onExplodEnd: "onExplodEnd",
+            onCollide: "onCollide",
+            onFall: "onFall"
         };
     }
+
     _checkIfEventExisted(ev) {
         if (this.eventsEnum.hasOwnProperty(ev) === true) {
             throw new Error(`the ${ev} is not defined in eventAdatper.js`);
@@ -23,14 +32,29 @@ class EventBus extends Phaser.Events.EventEmitter {
     }
     emit(ev, args) {
         this._checkIfEventExisted(ev);
-        return super.on(ev, args);
+        return super.on.apply(this, [ev, ...args, this._fsm.state]);
     }
     once(ev, fn, ctx) {
         this._checkIfEventExisted(ev);
         return super.once(ev, fn, ctx);
     }
+    getState() {
+        return this._fsm.state;
+    }
 }
 /**this Adapter implements Phaser.Events.EventEmitter and extends it for new property eventsEnum */
-const EventsAdapter = new EventBus();
+const EventsAdapter = new EventBus(fsmAdapter);
+//change state from "idle" to "spinning"
+//EventsAdapter.on(EventsAdapter.eventsEnum.onReelsStart, function () { this._fsm.spin(); }, EventsAdapter);
+//change state from "spinning" to "evaluation"
+//EventsAdapter.on(EventsAdapter.eventsEnum.onReelsEnd, function () { this._fsm.spinComplete(); }, EventsAdapter);
+//change state from "evaluation" to "idle"
+//EventsAdapter.on(EventsAdapter.eventsEnum.onLose, function () { this._fsm.fail(); }, EventsAdapter);
+//change state from "evaluation" to "win"
+//EventsAdapter.on(EventsAdapter.eventsEnum.onWin, function () { this._fsm.success(); }, EventsAdapter);
+//change state from "win" to "tumpling"
+//EventsAdapter.on(EventsAdapter.eventsEnum.onWin, function () { this._fsm.tumple(); }, EventsAdapter);
+//change state from "tumpling" to "evaluation"
+//EventsAdapter.on(EventsAdapter.eventsEnum.onTumpleEnd, function () { this._fsm.tumbleComplete(); }, EventsAdapter);
 
 export default EventsAdapter;
