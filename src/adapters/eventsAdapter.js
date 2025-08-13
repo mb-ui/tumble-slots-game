@@ -32,29 +32,29 @@ export class EventBus extends Phaser.Events.EventEmitter {
     }
     emit(ev, args) {
         this._checkIfEventExisted(ev);
-        return super.on.apply(this, [ev, ...args, this._fsm.state]);
+        return super.on.apply(this, [ev, ...args, this.fsm.state]);
     }
     once(ev, fn, ctx) {
         this._checkIfEventExisted(ev);
         return super.once(ev, fn, ctx);
     }
     getState() {
-        return this._fsm.state;
+        return this.fsm.state;
     }
 }
 /**this Adapter implements Phaser.Events.EventEmitter and extends it for new property eventsEnum */
 const EventsAdapter = new EventBus(fsmAdapter);
 //change state from "idle" to "spinning"
-//EventsAdapter.on(EventsAdapter.eventsEnum.onReelsStart, function () { this._fsm.spin(); }, EventsAdapter);
+//EventsAdapter.on(EventsAdapter.eventsEnum.onReelsStart, function () { this.fsm.spin(); }, EventsAdapter);
 //change state from "spinning" to "evaluation"
-//EventsAdapter.on(EventsAdapter.eventsEnum.onReelsEnd, function () { this._fsm.spinComplete(); }, EventsAdapter);
+//EventsAdapter.on(EventsAdapter.eventsEnum.onReelsEnd, function () { this.fsm.spinComplete(); }, EventsAdapter);
 //change state from "evaluation" to "idle"
-//EventsAdapter.on(EventsAdapter.eventsEnum.onLose, function () { this._fsm.fail(); }, EventsAdapter);
+//EventsAdapter.on(EventsAdapter.eventsEnum.onLose, function () { this.fsm.fail(); }, EventsAdapter);
 //change state from "evaluation" to "win"
-//EventsAdapter.on(EventsAdapter.eventsEnum.onWin, function () { this._fsm.success(); }, EventsAdapter);
+//EventsAdapter.on(EventsAdapter.eventsEnum.onWin, function () { this.fsm.success(); }, EventsAdapter);
 //change state from "win" to "tumpling"
-//EventsAdapter.on(EventsAdapter.eventsEnum.onWin, function () { this._fsm.tumple(); }, EventsAdapter);
+//EventsAdapter.on(EventsAdapter.eventsEnum.onWin, function () { this.fsm.tumple(); }, EventsAdapter);
 //change state from "tumpling" to "evaluation"
-//EventsAdapter.on(EventsAdapter.eventsEnum.onTumpleEnd, function () { this._fsm.tumbleComplete(); }, EventsAdapter);
+//EventsAdapter.on(EventsAdapter.eventsEnum.onTumpleEnd, function () { this.fsm.tumbleComplete(); }, EventsAdapter);
 
 export default EventsAdapter;
