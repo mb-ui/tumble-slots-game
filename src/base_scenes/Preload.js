@@ -19,6 +19,9 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.atlas('background', 'images/bg/bg.png', 'images/bg/bg.json');
         this.load.atlas('bgPreload', 'images/bg/bgmenu.png', 'images/bg/bgmenu.json');
         this.load.atlas('bgButtons', 'images/buttons/button.png', 'images/buttons/button.json');
+        this.load.image('prisonBg', 'images/bg/prison-bg.png');
+        this.load.image('pipe', 'images/bg/result2.png');
+        this.load.image('prison', 'images/bg/prison.jpg');
         this.load.atlas('symbols', 'images/symbols/symbols.png', 'images/symbols/symbols.json');
         this.load.atlas('symbols_blur', 'images/symbols/symbols_blur.png', 'images/symbols/symbols_blur.json');
         this.load.atlas('sound', 'images/sound/sound.png', 'images/sound/sound.json');

@@ -50,12 +50,14 @@ export default class Slot extends Phaser.GameObjects.Container {
     }
     addSymbol(existingImgName) {
         flag++;
-        console.log(`symbol ${flag} columnIndex : ${this.options.columnIndex} order : ${this.options.order}`)
-        this.imgName = existingImgName || ('hero_' + this._randomBetween(0, 9));
+        const skin = ["Assassin", "Beardy", "Pamela-1", "Pamela-2", "Pamela-5", "Buck", "Chuck", "Stumpy", "Truck", "Young"];
+        console.log(`symbol ${flag} columnIndex : ${this.options.columnIndex} order : ${this.options.order}`);
+        const random = this._randomBetween(0, 9);
+        this.imgName = existingImgName || (skin[random]);
         const symbol = this._scene.add.spine(this.options.symbolX, this.options.symbolY, "hero", "hero-atlas");
-        symbol.animationState.setAnimation(0, "idle", true);
-        symbol.setScale(0.1);
-        symbol.skeleton.setSkinByName('Beardy');
+        symbol.animationState.setAnimation(0, "idle", false);
+        symbol.setScale(0.165);
+        symbol.skeleton.setSkinByName(this.imgName);
         this._scene.physics.add.existing(symbol);
         //symbol.body.setOffset(0, 0);
         symbol.body.setSize(this._globalOptions.symbolWidth, this._globalOptions.symbolHeight);
@@ -67,7 +69,7 @@ export default class Slot extends Phaser.GameObjects.Container {
         symbol.body.setCollideWorldBounds(false);
         symbol.body.setGravityY(this._globalOptions.symbolCollisionGravity);
         symbol.body.setBounce(this._globalOptions.symbolBounce);
-        this._scene.physics.world.debugGraphic.visible = true;
+        //this._scene.physics.world.debugGraphic.visible = true;
         this._scene.physics.add.collider(symbol.body, this.floor, (symbol) => {
             if (!symbol.isCollid) {
                 this._onCollide();

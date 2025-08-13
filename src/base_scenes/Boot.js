@@ -17,7 +17,7 @@ export default class BootScene extends Phaser.Scene {
         };
         //Class Audio
         this.audioObject = new Audio(this);
-        this.audioObject.musicBackgroundDefault.play();
+        //this.audioObject.musicBackgroundDefault.play();
         const bgloading = new Sprite(this, Config.width / 2, Config.height / 2, 'bgPreload', 'bg_menu.png');
         const title = new Sprite(this, Config.width / 2, Config.height - 500,
             'logo', 'logo_game.png').setScale(scaleObject.default);

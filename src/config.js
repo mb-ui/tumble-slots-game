@@ -11,7 +11,6 @@ export default {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
             gravity: { y: 300 },
             fps: 520 // Increase the physics update rate (defaults to 60)
         }

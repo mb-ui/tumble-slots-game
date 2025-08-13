@@ -40,8 +40,8 @@ PayTable.prototype = {
     _getScore: function (arr) {
         let score = 0;
         arr.forEach(item => {
-            const symbolIndex = parseInt(item[0].imgName.split('_')[1]);
-            const payArray = this._globalOptions.payvalues[symbolIndex];
+            //const symbolIndex = parseInt(item[0].imgName.split('_')[1]);
+            const payArray = this._globalOptions.payvalues[2];
             const payArrayIndex = item.length > 4 ? 2 : 1;
             score += payArray[payArrayIndex];
         })
