@@ -39,7 +39,7 @@ export default class GameScene extends Phaser.Scene {
                 JSON.stringify(lastWinner) === JSON.stringify(currentSlot) && eventsAdapter.emit(eventsAdapter.eventsEnum.onTumpleEnd, this.getSlots());
             }
         });
-        eventsAdapter.on(eventsAdapter.eventsEnum.onReelsStart, function () { this.reels(); }, slots);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.reels(); }, slots);
         eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ winners }) { this.tumble(winners); }, slots);
 
         //add bg image
