@@ -16,7 +16,6 @@ export default class Slot extends Phaser.GameObjects.Container {
         this.positionX = x;
         this._globalOptions = globalOptions;
         this._isFall = false;
-        this.symbolOriginalHeight = this._globalOptions.symbolOriginalHeight;
         this.options = Object.assign({},
             {
                 onFall: () => { },
@@ -62,19 +61,23 @@ export default class Slot extends Phaser.GameObjects.Container {
         this.imgName = existingImgName || (skin[random]);
         const symbol = this._scene.add.spine(this.options.symbolX, this.options.symbolY, "hero", "hero-atlas");
         symbol.animationState.setAnimation(0, "idle", true);
-        symbol.setScale(0.165);
+
         symbol.skeleton.setSkinByName(this.imgName);
         this._scene.physics.add.existing(symbol);
-        //symbol.body.setOffset(0, 0);
-        symbol.body.setSize(this._globalOptions.symbolOriginalWidth, this._globalOptions.symbolOriginalHeight);
-        //
-        //this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
-        //const symbol = this._scene.physics.add.sprite(this.options.symbolX, this.options.symbolY, 'symbols', this.imgName + '.png');
         symbol.name = this.imgName;
         this.add(symbol);
+
+
+
         symbol.body.setCollideWorldBounds(false);
         symbol.body.setGravityY(this._globalOptions.symbolCollisionGravity);
         symbol.body.setBounce(this._globalOptions.symbolBounce);
+
+        symbol.setScale(this._globalOptions.symbolScale);
+        symbol.width = this._globalOptions.symbolOriginalWidth * this._globalOptions.symbolScale;
+        symbol.height = this._globalOptions.symbolOriginalHeight * this._globalOptions.symbolScale;
+
+
         //this._scene.physics.world.debugGraphic.visible = true;
         this._scene.physics.add.collider(symbol.body, this.floor, (symbol) => {
             if (!symbol.isCollid) {

@@ -21,8 +21,10 @@ const Options = {
 	],
 	/**minimom number of iteration of each slot for winning */
 	minSlotMatchForWin: 3,
-	symbolOriginalHeight: 114.6,
-	symbolOriginalWidth: 112,
+	symbolOriginalHeight: 1043.9,
+	symbolOriginalWidth: 620.96,
+	/**indicates symbol height percentage of cell */
+	symbolHeightPercentageBasedOnCell: 110,
 	/** height of slots table */
 	tableHeight: 453,
 	/** table width */
@@ -40,8 +42,11 @@ const Options = {
 	/**indicates delay(ms) of falling slots between each column */
 	fallenSlotsDelayBetweenColumns: 100
 };
+////////////////////////////// these options are automaticlly calculated /////////////////////////////
 /**width of slots table */
 Options.tableColumnWidth = Options.tableWidth / Options.tableColumnCount;
 /**height of each cell of slots table */
 Options.tableRowHeight = Options.tableHeight / Options.tableRowCount;
+Options.symbolScale = (Options.tableRowHeight * Options.symbolHeightPercentageBasedOnCell / 100) / Options.symbolOriginalHeight;
+
 export default Options;
