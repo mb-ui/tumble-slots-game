@@ -14,7 +14,8 @@ Machine.prototype = {
             onReady: () => { },
             onReelsStart: () => { },
             onReelsEnd: () => { },
-            onTumple: () => { }
+            onTumple: () => { },
+            onExplode: () => { }
         };
     },
     reels: function (reelsIndex = 0) {
@@ -33,9 +34,34 @@ Machine.prototype = {
             reelsIndex <= this._globalOptions.reelsCount - 1 && this.reels(reelsIndex);
         }, this._globalOptions.delayNextReelsStart)
     },
+    /**
+     * 
+     * @param {Array<{ reelsIndex, slotIndex, imgName }>} winners 
+     */
     tumble: function (winners) {
+        this._explodes(winners, () => this._tumble());
+    },
+    _tumble: function (winners) {
         const winnersCopy = [...winners];
-        winners.forEach((winner, i) => this._reels[winner.reelsIndex].tumble({ ...winner }, () => this._options.onTumple(winnersCopy, winner)));
+        //loop on reels and call each reels[reelsIndex].tumble with callback
+        this._reels.forEach((reels, reelsIndex) => {
+            reels.tumble((slotIndex) => this._options.onTumple(winnersCopy, { slotIndex, reelsIndex }));
+        });
+    },
+    /**
+     * explodes slot and then set reels[slotIndex] to null
+     * @param {Array<{ reelsIndex, slotIndex }>} winners 
+     */
+    _explodes: function (condidates, callback) {
+        for (let i = 0, length = condidates.length, lastIndex = length - 1; i <= lastIndex; i++) {
+            const { reelsIndex, slotIndex } = condidates[i];
+            this._reels[reelsIndex].explode(slotIndex, () => {
+                if (i == lastIndex) {
+                    this._options.onExplode();
+                    callback()
+                }
+            });
+        }
     },
     getSlots: function () {
         return this._reels.reduce((ac, reels, reelsIndex) =>
@@ -48,6 +74,9 @@ Machine.prototype = {
         } else {
             this._options.onReelsEnd(reelsIndex);
         }
+    },
+    update: function () {
+        this._reels.forEach(reels => reels.update());
     }
 };
 export default Machine;

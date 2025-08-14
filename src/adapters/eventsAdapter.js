@@ -17,8 +17,7 @@ export class EventBus extends Phaser.Events.EventEmitter {
             onWin: "onWin",
             onTumple: "onTumple",
             onTumpleEnd: "onTumpleEnd",
-            onExplodeStart: "onExplodeStart",
-            onExplodEnd: "onExplodEnd",
+            onExplode: "onExplode",
         };
     }
 

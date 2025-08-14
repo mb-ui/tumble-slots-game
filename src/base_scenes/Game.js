@@ -69,10 +69,15 @@ export default class GameScene extends Phaser.Scene {
                 reelsIndex == Options.reelsCount - 1 &&
                     eventsAdapter.emit(eventsAdapter.eventsEnum.onSpinEnd, this.getSlots());
             },
-            onTumple: function (winners, destroyedWinner) {
+            /**
+             * @param {Array<{ reelsIndex, slotIndex }>} winners 
+             * @param {{ reelsIndex, slotIndex }} destroyedSlotInfo 
+             */
+            onTumple: function (winners, destroyedSlotInfo) {
                 const lastWinner = winners[winners.length - 1];
-                JSON.stringify(lastWinner) === JSON.stringify(destroyedWinner) && eventsAdapter.emit(eventsAdapter.eventsEnum.onTumpleEnd, this.getSlots());
-            }
+                JSON.stringify(lastWinner) === JSON.stringify(destroyedSlotInfo) && eventsAdapter.emit(eventsAdapter.eventsEnum.onTumpleEnd, this.getSlots());
+            },
+            onExplod: function () { eventsAdapter.emit(eventsAdapter.eventsEnum.onExplode); }
         });
         eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.reels(); }, machine);
         eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ winners }) { this.tumble(winners); }, machine);
