@@ -16,7 +16,7 @@ export default class Slot extends Phaser.GameObjects.Container {
         this.positionX = x;
         this._globalOptions = globalOptions;
         this._isFall = false;
-        this.symbolHeight = this._globalOptions.symbolHeight;
+        this.symbolOriginalHeight = this._globalOptions.symbolOriginalHeight;
         this.options = Object.assign({},
             {
                 onFall: () => { },
@@ -43,6 +43,12 @@ export default class Slot extends Phaser.GameObjects.Container {
         this.floor.visible = false;
         // add symbol
         this._setEnableFallDetection(true).addSymbol(this.options.imgName);
+
+        // const table = this._scene.add.graphics();
+        // table.lineStyle(2, 0xffd700, 1);
+        // table.strokeRect(3, 3, this.width - 6, this.height - 6);
+        // this.add(table);
+        // table.setDepth(5);
     }
     _setEnableFallDetection(value) {
         this.enableCollide = value;
@@ -60,7 +66,7 @@ export default class Slot extends Phaser.GameObjects.Container {
         symbol.skeleton.setSkinByName(this.imgName);
         this._scene.physics.add.existing(symbol);
         //symbol.body.setOffset(0, 0);
-        symbol.body.setSize(this._globalOptions.symbolWidth, this._globalOptions.symbolHeight);
+        symbol.body.setSize(this._globalOptions.symbolOriginalWidth, this._globalOptions.symbolOriginalHeight);
         //
         //this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
         //const symbol = this._scene.physics.add.sprite(this.options.symbolX, this.options.symbolY, 'symbols', this.imgName + '.png');
@@ -115,7 +121,7 @@ export default class Slot extends Phaser.GameObjects.Container {
             const symbol = this.symbol;
             const childMatrix = symbol.getWorldTransformMatrix();
             const worldY = childMatrix.ty;
-            if ((worldY > 0) && worldY > (this._globalOptions.tableY + this._globalOptions.tableHeight + this._globalOptions.symbolHeight)) {
+            if ((worldY > 0) && worldY > (this._globalOptions.tableY + this._globalOptions.tableHeight + this._globalOptions.symbolOriginalHeight)) {
                 this.remove(symbol, true);
                 this.options.onFall(this);
             }

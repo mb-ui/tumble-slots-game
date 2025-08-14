@@ -31,8 +31,8 @@ Slots.prototype = {
         }
     },
     _createSlot: function (columnIndex, order, op) {
-        const conX = this._globalOptions.tableX + (columnIndex * this._globalOptions.tableColumnWidth) + (columnIndex * this._globalOptions.tableColumnGap);
-        const conY = this._globalOptions.tableY - (order * this._globalOptions.symbolHeight) - (order * this._globalOptions.tableRowGap);
+        const conX = this._globalOptions.tableX + (columnIndex * this._globalOptions.tableColumnWidth);
+        const conY = this._globalOptions.tableY - (order * this._globalOptions.tableRowHeight);
         const con = new this.Slot(this._scene, Object.assign(
             {
                 columnIndex,
@@ -127,7 +127,7 @@ Slots.prototype = {
                     con.destroy();
                     this._createSlot(columnIndex, i,
                         {
-                            symbolY: this._globalOptions.tableHeight - (oldOrder * this._globalOptions.symbolHeight) - ((oldOrder - 1) * this._globalOptions.tableRowGap),
+                            symbolY: this._globalOptions.tableHeight - (oldOrder * this._globalOptions.tableRowHeight),
                             imgName: existingImgName
                         }
                     );

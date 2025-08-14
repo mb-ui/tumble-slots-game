@@ -11,7 +11,7 @@ Explode.prototype = {
         slot.symbol.alpha = 0.3;
         setTimeout(() => {
             const x = slot.positionX + slot.options.symbolX;
-            const y = slot.positionY + slot.height - (slot.symbolHeight / 2);
+            const y = slot.positionY + slot.height - (slot.symbolOriginalHeight / 2);
             this.explode = this._scene.physics.add.staticSprite(x, y, 'explode');
             this.explode.setDepth(2);
             if (!this._scene.anims.exists('explode')) {
