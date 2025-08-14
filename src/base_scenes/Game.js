@@ -9,6 +9,7 @@ import SpinButton from '../components/spinButton/spinButton.factory';
 import CreditBoard from '../components/creditBoard/creditBoard.factory';
 import ScoreBoard from '../components/scoreBoard/scoreBoard.factory';
 import Hero from '../components/hero/hero.factory';
+import eventsAdapter from '../adapters/eventsAdapter';
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'Game' });
@@ -44,7 +45,15 @@ export default class GameScene extends Phaser.Scene {
         new Hero(this);
         new Maxbet(this);
         new PayTable(this);
-        new SpinButton(this);
+        //spin button
+        const spinButton = new SpinButton({
+            scene: this,
+            isPending: false,//inital state
+            onClick: eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsStart)
+        });
+        eventsAdapter.on(eventsAdapter.eventsEnum.onReady, function () { this.ready(); }, spinButton);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onIdle, function () { this.ready(); }, spinButton);
+        //credit board
         new CreditBoard(this);
         new ScoreBoard(this);
         new Audio(this).createButton();
