@@ -54,7 +54,10 @@ export default class GameScene extends Phaser.Scene {
         eventsAdapter.on(eventsAdapter.eventsEnum.onReady, function () { this.ready(); }, spinButton);
         eventsAdapter.on(eventsAdapter.eventsEnum.onIdle, function () { this.ready(); }, spinButton);
         //credit board
-        new CreditBoard(this);
+        const creditBoard = new CreditBoard({ scent: this });
+        eventsAdapter.on(eventsAdapter.eventsEnum.onReelsStart, function () { this.bet(); }, creditBoard);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ score }) { this.win(score); }, creditBoard);
+        //score Board
         new ScoreBoard(this);
         new Audio(this).createButton();
     }

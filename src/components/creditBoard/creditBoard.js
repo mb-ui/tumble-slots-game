@@ -1,25 +1,26 @@
-function CreditBoard(deps, scene) {
+function CreditBoard(deps, { scene }) {
     const { pub_sub, globalOptions, Config } = deps();
-    let _credit = globalOptions.credit;
-    this.txtMoney = scene.add.text(Config.width - 1050, Config.height - 695, _credit + '$', {
+    this._globalOptions = globalOptions;
+    this._credit = globalOptions.credit;
+    this.txtMoney = scene.add.text(Config.width - 1050, Config.height - 695, this._credit + '$', {
         fontSize: '30px',
         color: '#fff',
         fontFamily: 'PT Serif'
     });
-    this._setTextX(_credit);
-    pub_sub.on('onBet', () => {
-        _credit = _credit - globalOptions.bet;
-        this.txtMoney.setText(_credit + '$')
-        this._setTextX(_credit);
-    });
-    pub_sub.on('onPlus', (plusValue) => {
-        _credit = _credit + plusValue;
-        this.txtMoney.setText(_credit + '$')
-        this._setTextX(_credit);
-    });
+    this._setTextX(this._credit);
 }
 CreditBoard.prototype = {
-    _setTextX(value) {
+    bet: function () {
+        this._credit = this._credit - this._globalOptions.bet;
+        this.txtMoney.setText(this._credit + '$')
+        this._setTextX(this._credit);
+    },
+    win: function (plusValue) {
+        this._credit = this._credit + plusValue;
+        this.txtMoney.setText(this._credit + '$')
+        this._setTextX(this._credit);
+    },
+    _setTextX: function (value) {
         if (value >= 100000000) this.txtMoney.x = 217;
         else if (value >= 10000000) this.txtMoney.x = 220;
         else if (value >= 1000000) this.txtMoney.x = 230;
