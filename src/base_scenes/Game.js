@@ -18,7 +18,7 @@ export default class GameScene extends Phaser.Scene {
         //add image machine
         const prison = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prison').setDepth(-1);
         prison.setScale(Options.tableWidth / Config.width, Options.tableHeight / Config.height);
-        const pipe = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'pipe').setDepth(4);
+        const pipe = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prisonSkeleton').setDepth(4);
         pipe.setScale(Options.tableWidth / Config.width, Options.tableHeight / Config.height);
 
         this.slots = new Slots(this);
