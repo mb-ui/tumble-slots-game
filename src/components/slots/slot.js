@@ -23,7 +23,7 @@ export default class Slot extends Phaser.GameObjects.Container {
                 order: 0,
                 columnIndex: 0,
                 imgName: '',
-                symbolX: this._globalOptions.slotWidth / 2,
+                symbolX: this._globalOptions.tableColumnWidth / 2,
                 symbolY: 0,
                 x: 0,
                 y: 0,
@@ -34,12 +34,12 @@ export default class Slot extends Phaser.GameObjects.Container {
         // add container
         scene.add.existing(this);
         this._flag = false;
-        this.width = this._globalOptions.slotWidth;
-        this.height = this._globalOptions.slotHeight;
+        this.width = this._globalOptions.tableColumnWidth;
+        this.height = this._globalOptions.tableHeight;
         this.setSize(this.width, this.height);
         // adding floor
-        this.floor = this._scene.physics.add.staticSprite(this.positionX + this.width / 2, this.positionY + this._globalOptions.slotHeight, null);
-        this.floor.setSize(this._globalOptions.slotWidth, 1);
+        this.floor = this._scene.physics.add.staticSprite(this.positionX + this.width / 2, this.positionY + this._globalOptions.tableHeight, null);
+        this.floor.setSize(this._globalOptions.tableColumnWidth, 1);
         this.floor.visible = false;
         // add symbol
         this._setEnableFallDetection(true).addSymbol(this.options.imgName);
@@ -115,7 +115,7 @@ export default class Slot extends Phaser.GameObjects.Container {
             const symbol = this.symbol;
             const childMatrix = symbol.getWorldTransformMatrix();
             const worldY = childMatrix.ty;
-            if ((worldY > 0) && worldY > (this._globalOptions.slotsY + this._globalOptions.slotHeight + this._globalOptions.symbolHeight)) {
+            if ((worldY > 0) && worldY > (this._globalOptions.tableY + this._globalOptions.tableHeight + this._globalOptions.symbolHeight)) {
                 this.remove(symbol, true);
                 this.options.onFall(this);
             }

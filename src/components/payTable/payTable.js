@@ -24,14 +24,14 @@ PayTable.prototype = {
         //fill symbols
         slots.loop((symbol, i) => {
             const { order, columnIndex } = symbol.options;
-            if (order < this._globalOptions.slotCapacity) {
+            if (order < this._globalOptions.tableRowCount) {
                 const imgName = symbol.imgName;
                 symbols[imgName] = symbols[imgName] || [];
                 symbols[imgName].push({ columnIndex, order, imgName });
             }
         });
         //get symbols with more than 3 iteration
-        const iteratedSymbols = Object.values(symbols).filter((value) => value.length >= this._globalOptions.minSymbolIterate);
+        const iteratedSymbols = Object.values(symbols).filter((value) => value.length >= this._globalOptions.minSlotMatchForWin);
         const result = iteratedSymbols.reduce((ac, value) => ac.concat(value), []);
         return { condidates: result, iteratedSymbols };
         // this._getScore(iteratedSymbols);
