@@ -22,6 +22,7 @@ Machine.prototype = {
             this._reels = [];
         }
         this._reels.push(new this._ReelsClass({
+            scene: this._options.scene,
             onReelsStart: (reelsIndex) => this._options.onReelsStart(reelsIndex),
             onReelsEnd: (reelsIndex) => this._onReelsEnd(reelsIndex),
             y: this._globalOptions.machineY,
@@ -32,11 +33,13 @@ Machine.prototype = {
             reelsIndex <= this._globalOptions.reelsCount - 1 && this.reels(reelsIndex);
         }, this._globalOptions.delayNextReelsStart)
     },
-    tumble: function (winners) { },
+    tumble: function (winners) {
+        const winnersCopy = [...winners];
+        winners.forEach((winner, i) => this._reels[winner.reelsIndex].tumble({ ...winner }, () => this._options.onTumple(winnersCopy, winner)));
+    },
     getSlots: function () {
-        const slots = [];
-        this._reels.forEach((reels, reelsIndex) => reels.forEach((slot, slotIndex) => slots.push({ reelsIndex, slotIndex, slot })));
-        return slots;
+        return this._reels.reduce((ac, reels, reelsIndex) =>
+            ac.concat(reels.getSlots().map(slot => ({ ...slot, reelsIndex }))), []);
     },
     _onReelsEnd: function (reelsIndex) {
         //check if initial animation is finished or not
@@ -47,3 +50,4 @@ Machine.prototype = {
         }
     }
 };
+export default Machine;
