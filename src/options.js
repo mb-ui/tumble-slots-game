@@ -23,30 +23,30 @@ const Options = {
 	minSlotMatchForWin: 3,
 	symbolOriginalHeight: 1043.9,
 	symbolOriginalWidth: 620.96,
-	/**indicates symbol height percentage of cell */
-	symbolHeightPercentageBasedOnCell: 110,
-	/** height of slots table */
-	tableHeight: 453,
+	/**indicates symbol height percentage of slot */
+	symbolHeightPercentageBasedOnSlot: 110,
+	/** table height of machine  */
+	machineHeight: 453,
 	/** table width */
-	tableWidth: 800,
+	machineWidth: 800,
 	/** Y position of slots table */
-	tableY: 165,
+	machineY: 165,
 	/** X position of slots table */
-	tableX: 250,
-	/**indicates how many slots should be placed in each column of table slots */
-	tableRowCount: 3,
-	/**indicates number of columns which should be have for the table slots */
-	tableColumnCount: 3,
-	/**indicates how many slots in each column are fallen after the user clicks on spin button */
-	fallenSlotsCountPerColumnAfterSpin: 7,
-	/**indicates delay(ms) of falling slots between each column */
-	fallenSlotsDelayBetweenColumns: 100
+	machineX: 250,
+	/**indicates how many slots should be placed in each reals */
+	reelsSlotsCount: 3,
+	/**indicates number of reels */
+	reelsCount: 3,
+	/**indicates how many hidden slots inside each reels there are */
+	reelsHiddenSlotsCount: 7,
+	/**delay to next reels start */
+	delayNextReelsStart: 100
 };
 ////////////////////////////// these options are automaticlly calculated /////////////////////////////
 /**width of slots table */
-Options.tableColumnWidth = Options.tableWidth / Options.tableColumnCount;
+Options.tableColumnWidth = Options.machineWidth / Options.reelsCount;
 /**height of each cell of slots table */
-Options.tableRowHeight = Options.tableHeight / Options.tableRowCount;
-Options.symbolScale = (Options.tableRowHeight * Options.symbolHeightPercentageBasedOnCell / 100) / Options.symbolOriginalHeight;
+Options.tableRowHeight = Options.machineHeight / Options.reelsSlotsCount;
+Options.symbolScale = (Options.tableRowHeight * Options.symbolHeightPercentageBasedOnSlot / 100) / Options.symbolOriginalHeight;
 
 export default Options;

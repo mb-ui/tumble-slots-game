@@ -5,19 +5,20 @@ export class EventBus extends Phaser.Events.EventEmitter {
         this.fsm = fsmAdapter;
         /**contains all custom events through the App */
         this.eventsEnum = {
-            /**this is initial event and indicates that initial slots animation has finished and slots are ready */
+            /**this is initial event and indicates that initial animation of slots animation has finished and slots are ready */
             onReady: "onReady",
             onIdle: "onIdle",
+            onButtonClick: "onButtonClick",
+            onSpinStart: "onSpinStart",
             onReelsStart: "onReelsStart",
             onReelsEnd: "onReelsEnd",
+            onSpinEnd: "onSpinStart",
             onLose: "onLose",
             onWin: "onWin",
-            onTumpleStart: "onTumpleState",
+            onTumple: "onTumple",
             onTumpleEnd: "onTumpleEnd",
             onExplodeStart: "onExplodeStart",
             onExplodEnd: "onExplodEnd",
-            onCollide: "onCollide",
-            onFall: "onFall"
         };
     }
 
@@ -32,7 +33,7 @@ export class EventBus extends Phaser.Events.EventEmitter {
     }
     emit(ev, args) {
         this._checkIfEventExisted(ev);
-        return super.on.apply(this, [ev, ...args, this.fsm.state]);
+        return super.on.apply(this, [ev, ...args, () => getState()]);
     }
     once(ev, fn, ctx) {
         this._checkIfEventExisted(ev);

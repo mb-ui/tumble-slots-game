@@ -9,6 +9,7 @@ import SpinButton from '../components/spinButton/spinButton.factory';
 import CreditBoard from '../components/creditBoard/creditBoard.factory';
 import ScoreBoard from '../components/scoreBoard/scoreBoard.factory';
 import Hero from '../components/hero/hero.factory';
+import eventsAdapter from '../adapters/eventsAdapter';
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'Game' });
@@ -17,12 +18,29 @@ export default class GameScene extends Phaser.Scene {
     create() {
         //add image machine
         const prison = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prison').setDepth(-1);
-        prison.setScale(Options.tableWidth / Config.width, Options.tableHeight / Config.height);
-        const pipe = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prisonSkeleton').setDepth(4);
-        pipe.setScale(Options.tableWidth / Config.width, Options.tableHeight / Config.height);
+        prison.setScale(Options.machineWidth / Config.width, Options.machineHeight / Config.height);
+        const prisonSkeleton = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prisonSkeleton').setDepth(4);
+        prisonSkeleton.setScale(Options.machineWidth / Config.width, Options.machineHeight / Config.height);
 
-        this.slots = new Slots(this);
-
+        const slots = new Slots({
+            scene: this,
+            onReady: () => eventsAdapter.emit(eventsAdapter.eventsEnum.onIdle),
+            onReelsStart: (reelsIndex) => {
+                eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsStart, reelsIndex);
+            },
+            onReelsEnd: function (reelsIndex) {
+                eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsEnd, reelsIndex);
+                // check if the last Reels is end then trigger onSpinEnd
+                reelsIndex == Options.reelsCount - 1 &&
+                    eventsAdapter.emit(eventsAdapter.eventsEnum.onSpinEnd, this.getSlots());
+            },
+            onTumple: function (winners, currentSlot) {
+                const lastWinner = winners[winners.length - 1];
+                JSON.stringify(lastWinner) === JSON.stringify(currentSlot) && eventsAdapter.emit(eventsAdapter.eventsEnum.onTumpleEnd, this.getSlots());
+            }
+        });
+        eventsAdapter.on(eventsAdapter.eventsEnum.onReelsStart, function () { this.reels(); }, slots);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ winners }) { this.tumble(winners); }, slots);
 
         //add bg image
         const background = new Sprite(this, 0, 0, 'prisonBg').setDepth(0);
@@ -34,19 +52,36 @@ export default class GameScene extends Phaser.Scene {
         // const table = this.add.graphics();
         // table.lineStyle(2, 0xFF0000, 1);
         // table.strokeRect(
-        //     Options.tableX,
-        //     Options.tableY,
-        //     Options.tableWidth,
-        //     Options.tableHeight
+        //     Options.machineX,
+        //     Options.machineY,
+        //     Options.machineWidth,
+        //     Options.machineHeight
         // );
         // table.setDepth(4);
 
         new Hero(this);
-        new Maxbet(this);
+        new Maxbet({ scene: this });
         new PayTable(this);
-        new SpinButton(this);
-        new CreditBoard(this);
-        new ScoreBoard(this);
+        //spin button
+        const spinButton = new SpinButton({
+            scene: this,
+            isPending: false,//inital state
+            onClick: () => {
+                eventsAdapter.emit(eventsAdapter.eventsEnum.onButtonClick);
+                eventsAdapter.emit(eventsAdapter.eventsEnum.onSpinStart);
+            }
+        });
+        eventsAdapter.on(eventsAdapter.eventsEnum.onReady, function () { this.ready(); }, spinButton);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onIdle, function () { this.ready(); }, spinButton);
+        //credit board
+        const creditBoard = new CreditBoard({ scent: this });
+        eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.bet(); }, creditBoard);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ score }) { this.win(score); }, creditBoard);
+        //score Board
+        const scoreBoard = new ScoreBoard({ scene: this });
+        eventsAdapter.on(eventsAdapter.eventsEnum.onLose, function () { this.clear(); }, scoreBoard);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ score }) { this.addScore(score); }, scoreBoard);
+        // Audio
         new Audio(this).createButton();
     }
     update() {

@@ -24,7 +24,7 @@ PayTable.prototype = {
         //fill symbols
         slots.loop((symbol, i) => {
             const { order, columnIndex } = symbol.options;
-            if (order < this._globalOptions.tableRowCount) {
+            if (order < this._globalOptions.reelsSlotsCount) {
                 const imgName = symbol.imgName;
                 symbols[imgName] = symbols[imgName] || [];
                 symbols[imgName].push({ columnIndex, order, imgName });

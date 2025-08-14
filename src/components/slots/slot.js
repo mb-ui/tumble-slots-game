@@ -34,10 +34,10 @@ export default class Slot extends Phaser.GameObjects.Container {
         scene.add.existing(this);
         this._flag = false;
         this.width = this._globalOptions.tableColumnWidth;
-        this.height = this._globalOptions.tableHeight;
+        this.height = this._globalOptions.machineHeight;
         this.setSize(this.width, this.height);
         // adding floor
-        this.floor = this._scene.physics.add.staticSprite(this.positionX + this.width / 2, this.positionY + this._globalOptions.tableHeight, null);
+        this.floor = this._scene.physics.add.staticSprite(this.positionX + this.width / 2, this.positionY + this._globalOptions.machineHeight, null);
         this.floor.setSize(this._globalOptions.tableColumnWidth, 1);
         this.floor.visible = false;
         // add symbol
@@ -124,7 +124,7 @@ export default class Slot extends Phaser.GameObjects.Container {
             const symbol = this.symbol;
             const childMatrix = symbol.getWorldTransformMatrix();
             const worldY = childMatrix.ty;
-            if ((worldY > 0) && worldY > (this._globalOptions.tableY + this._globalOptions.tableHeight + this._globalOptions.symbolOriginalHeight)) {
+            if ((worldY > 0) && worldY > (this._globalOptions.machineY + this._globalOptions.machineHeight + this._globalOptions.symbolOriginalHeight)) {
                 this.remove(symbol, true);
                 this.options.onFall(this);
             }
