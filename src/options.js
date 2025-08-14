@@ -43,10 +43,10 @@ const Options = {
 	delayNextReelsStart: 100
 };
 ////////////////////////////// these options are automaticlly calculated /////////////////////////////
-/**width of slots table */
-Options.tableColumnWidth = Options.machineWidth / Options.reelsCount;
-/**height of each cell of slots table */
-Options.tableRowHeight = Options.machineHeight / Options.reelsSlotsCount;
-Options.symbolScale = (Options.tableRowHeight * Options.symbolHeightPercentageBasedOnSlot / 100) / Options.symbolOriginalHeight;
+/**width of each reels */
+Options.reelsWidth = Options.machineWidth / Options.reelsCount;
+/**height of each cell or slot */
+Options.slotHeight = Options.machineHeight / Options.reelsSlotsCount;
+Options.symbolScale = (Options.slotHeight * Options.symbolHeightPercentageBasedOnSlot / 100) / Options.symbolOriginalHeight;
 
 export default Options;

@@ -22,7 +22,7 @@ export default class Slot extends Phaser.GameObjects.Container {
                 order: 0,
                 columnIndex: 0,
                 imgName: '',
-                symbolX: this._globalOptions.tableColumnWidth / 2,
+                symbolX: this._globalOptions.reelsWidth / 2,
                 symbolY: 0,
                 x: 0,
                 y: 0,
@@ -33,12 +33,12 @@ export default class Slot extends Phaser.GameObjects.Container {
         // add container
         scene.add.existing(this);
         this._flag = false;
-        this.width = this._globalOptions.tableColumnWidth;
+        this.width = this._globalOptions.reelsWidth;
         this.height = this._globalOptions.machineHeight;
         this.setSize(this.width, this.height);
         // adding floor
         this.floor = this._scene.physics.add.staticSprite(this.positionX + this.width / 2, this.positionY + this._globalOptions.machineHeight, null);
-        this.floor.setSize(this._globalOptions.tableColumnWidth, 1);
+        this.floor.setSize(this._globalOptions.reelsWidth, 1);
         this.floor.visible = false;
         // add symbol
         this._setEnableFallDetection(true).addSymbol(this.options.imgName);

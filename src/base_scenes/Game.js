@@ -2,7 +2,7 @@ import Config from '../config';
 import Options from '../options';
 import Audio from '../components/audio/audio.factory';
 import Sprite from '../adapters/Sprite';
-import Slots from '../components/slots/slots.factory';
+import Machine from '../components/machine/machine.factory';
 import PayTable from '../components/payTable/payTable.factory';
 import Maxbet from '../components/Maxbet';
 import SpinButton from '../components/spinButton/spinButton.factory';
@@ -21,8 +21,8 @@ export default class GameScene extends Phaser.Scene {
         prison.setScale(Options.machineWidth / Config.width, Options.machineHeight / Config.height);
         const prisonSkeleton = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prisonSkeleton').setDepth(4);
         prisonSkeleton.setScale(Options.machineWidth / Config.width, Options.machineHeight / Config.height);
-
-        const slots = new Slots({
+        // Machine
+        const machine = new Machine({
             scene: this,
             onReady: () => eventsAdapter.emit(eventsAdapter.eventsEnum.onIdle),
             onReelsStart: (reelsIndex) => {
@@ -39,8 +39,8 @@ export default class GameScene extends Phaser.Scene {
                 JSON.stringify(lastWinner) === JSON.stringify(currentSlot) && eventsAdapter.emit(eventsAdapter.eventsEnum.onTumpleEnd, this.getSlots());
             }
         });
-        eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.reels(); }, slots);
-        eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ winners }) { this.tumble(winners); }, slots);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.reels(); }, machine);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ winners }) { this.tumble(winners); }, machine);
 
         //add bg image
         const background = new Sprite(this, 0, 0, 'prisonBg').setDepth(0);
@@ -85,6 +85,6 @@ export default class GameScene extends Phaser.Scene {
         new Audio(this).createButton();
     }
     update() {
-        this.slots.update();
+        this.machine.update();
     }
 }
