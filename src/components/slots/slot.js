@@ -55,7 +55,7 @@ export default class Slot extends Phaser.GameObjects.Container {
         const random = this._randomBetween(0, 9);
         this.imgName = existingImgName || (skin[random]);
         const symbol = this._scene.add.spine(this.options.symbolX, this.options.symbolY, "hero", "hero-atlas");
-        symbol.animationState.setAnimation(0, "idle", false);
+        symbol.animationState.setAnimation(0, "idle", true);
         symbol.setScale(0.165);
         symbol.skeleton.setSkinByName(this.imgName);
         this._scene.physics.add.existing(symbol);
