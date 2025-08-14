@@ -1,34 +1,38 @@
-# HTML 5 Game Example
+# HTML 5 GAME EXAMPLE
 
 Tumble Slots game using `Phaser 3`
 
-## Demo
+## DEMO
 
 - [Play Online](https://mb-ui.github.io/tumble-slots-game/)
 
-## Features
+## FEATURES
 
 - Responsive (desktop and mobile)
 
 - Implement a lots of patterns including : `EDA`,`Adapter`, `FSM`, `DI` and ...
 
 
-### CDN Link
-
-> Comming soon...
-
-## Installing Dependencies and Serving
+## INSTALLING DEPENDENCIES AND SERVING
 
 `$ npm install` installs all dev dependencies in package.json.
 
 `$ npm run start` launches a server and navigates to localhost:2000.
 
-## Build
+
+### UPCOMING FEATURES
+
+- Test
+
+- Lazy Loading (including Audio)
+
+- Typescript
+
+- ...
+
+
+## BUILD
 
 ```js
  $ npm run build
 ```
-
-## Test
-
-> Comming soon...
