@@ -59,13 +59,14 @@ export default class GameScene extends Phaser.Scene {
     _createMachine() {
         const machine = new Machine({
             scene: this,
-            onReady: () => eventsAdapter.emit(eventsAdapter.eventsEnum.onIdle),
+            /**reels start means falling reels slots from the machin */
             onReelsStart: (reelsIndex) => {
                 eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsStart, reelsIndex);
             },
+            /**reels end means collide reels slots with buttom of machin */
             onReelsEnd: function (reelsIndex) {
                 eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsEnd, reelsIndex);
-                // check if the last Reels is end then trigger onSpinEnd
+                // check if the last Reels is ended then trigger onSpinEnd
                 reelsIndex == Options.reelsCount - 1 &&
                     eventsAdapter.emit(eventsAdapter.eventsEnum.onSpinEnd, this.getSlots());
             },
@@ -79,19 +80,22 @@ export default class GameScene extends Phaser.Scene {
             },
             onExplod: function () { eventsAdapter.emit(eventsAdapter.eventsEnum.onExplode); }
         });
-        eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.reels(); }, machine);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.emptyReels(); }, machine);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onReelsStart, function (reelsIndex, slotIndex) {
+            //calling fillReels method only after starting of last reels
+            //reels starting here means falling reels slots from the machine
+            if (reelsIndex === this._globalOptions.reelsCount - 1 && slotIndex === 0) { this.fillReels(); }
+        }, machine);
         eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ winners }) { this.tumble(winners); }, machine);
     }
     _createSpinButton() {
         const spinButton = new SpinButton({
             scene: this,
-            isPending: false,//inital state
             onClick: () => {
                 eventsAdapter.emit(eventsAdapter.eventsEnum.onButtonClick);
                 eventsAdapter.emit(eventsAdapter.eventsEnum.onSpinStart);
             }
         });
-        eventsAdapter.on(eventsAdapter.eventsEnum.onReady, function () { this.ready(); }, spinButton);
         eventsAdapter.on(eventsAdapter.eventsEnum.onIdle, function () { this.ready(); }, spinButton);
     }
     _createCreditBoard() {

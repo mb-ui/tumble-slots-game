@@ -6,36 +6,48 @@ function Machine(deps, options) {
     this._options = Object.assign(this._getDefaultOptions(), options);
     this.ready = false;
     this._reels = [];
+    this._init();
 }
 Machine.prototype = {
     _getDefaultOptions: function () {
         return {
             scene: null,
-            onReady: () => { },
-            onReelsStart: () => { },
-            onReelsEnd: () => { },
+            onReelsStart: (reelsIndex, slotIndex) => { },
+            onReelsEnd: (reelsIndex, slotIndex) => { },
             onTumple: () => { },
             onExplode: () => { }
         };
     },
-    reels: function (reelsIndex = 0) {
-        if (reelsIndex == 0) {
-            this._reels = [];
-        }
-        this._reels.push(new this._ReelsClass({
-            scene: this._options.scene,
-            onReelsStart: (reelsIndex) => this._options.onReelsStart(reelsIndex),
-            onReelsEnd: (reelsIndex) => this._onReelsEnd(reelsIndex),
-            y: this._globalOptions.machineY,
-            x: this._globalOptions.machineX + (reelsIndex * this._globalOptions.reelsWidth)
-        }));
-        setTimeout(() => {
+    /**_init method only executed once at initally and create reels instances */
+    _init: function () {
+        Array.from({ length: this._options.reelsCount }).map(i => i).forEach(reelsIndex => {
+            this._reels[reelsIndex] = new this._ReelsClass({
+                scene: this._options.scene,
+                onReelsStart: (slotIndex) => this._options.onReelsStart(reelsIndex, slotIndex),
+                onReelsEnd: (slotIndex) => this._options.onReelsEnd(reelsIndex, slotIndex),
+                y: this._globalOptions.machineY,
+                x: this._globalOptions.machineX + (reelsIndex * this._globalOptions.reelsWidth)
+            });
+        });
+    },
+    /**calls reels.fill() based on delayNextReelsStart option */
+    fillReels: function (reelsIndex = 0) {
+        if (reelsIndex <= this._globalOptions.reelsCount - 1) {
+            this._reels[reelsIndex].fill();
             reelsIndex++;
-            reelsIndex <= this._globalOptions.reelsCount - 1 && this.reels(reelsIndex);
-        }, this._globalOptions.delayNextReelsStart)
+            setTimeout(() => { this.fillReels(reelsIndex); }, this._globalOptions.delayNextReelsStart);
+        }
+    },
+    /**calls reels.empty() based on delayNextReelsStart option */
+    emptyReels: function (reelsIndex = 0) {
+        if (reelsIndex <= this._globalOptions.reelsCount - 1) {
+            this._reels[reelsIndex].empty();
+            reelsIndex++;
+            setTimeout(() => { this.emptyReels(reelsIndex); }, this._globalOptions.delayNextReelsStart);
+        }
     },
     /**
-     * 
+     * first explods and destroys winners slots and then check remianed slots for animation
      * @param {Array<{ reelsIndex, slotIndex, imgName }>} winners 
      */
     tumble: function (winners) {
@@ -51,6 +63,7 @@ Machine.prototype = {
     /**
      * explodes slot and then set reels[slotIndex] to null
      * @param {Array<{ reelsIndex, slotIndex }>} winners 
+     * @param {()=>void} callback is fired when last slot is exploded
      */
     _explodes: function (condidates, callback) {
         for (let i = 0, length = condidates.length, lastIndex = length - 1; i <= lastIndex; i++) {
@@ -66,14 +79,6 @@ Machine.prototype = {
     getSlots: function () {
         return this._reels.reduce((ac, reels, reelsIndex) =>
             ac.concat(reels.getSlots().map(slot => ({ ...slot, reelsIndex }))), []);
-    },
-    _onReelsEnd: function (reelsIndex) {
-        //check if initial animation is finished or not
-        if (this.ready == false) {
-            this._options.onReady();
-        } else {
-            this._options.onReelsEnd(reelsIndex);
-        }
     },
     update: function () {
         this._reels.forEach(reels => reels.update());

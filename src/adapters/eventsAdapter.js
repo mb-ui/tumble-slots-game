@@ -6,7 +6,6 @@ export class EventBus extends Phaser.Events.EventEmitter {
         /**contains all custom events through the App */
         this.eventsEnum = {
             /**this is initial event and indicates that initial animation of slots animation has finished and slots are ready */
-            onReady: "onReady",
             onIdle: "onIdle",
             onButtonClick: "onButtonClick",
             onSpinStart: "onSpinStart",

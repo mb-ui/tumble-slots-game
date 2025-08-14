@@ -30,7 +30,7 @@ Reels.prototype = {
     },
     /**creates all slots for the reels and indirectly makes the onReelsEnd event to trigger */
     fill: function () {
-        Array.from({ length: this._options.reelsSlotsCount }).map(i => i)
+        Array.from({ length: this._options.reelsSlotsCount + this._options.reelsHiddenSlotsCount }).map(i => i)
             .forEach(slotIndex => this._createSlot(slotIndex, {
                 onCollide: () => this._options.onReelsEnd(slotIndex),
                 imgName: '',
@@ -84,7 +84,7 @@ Reels.prototype = {
     },
     _onFall: function (slotIndex) {
         this._destorySlot(slotIndex);
-        this._options.onReelsStart();
+        this._options.onReelsStart(slotIndex);
     },
     _destorySlot: function (slotIndex) {
         const slot = this._slots[slotIndex];
@@ -111,8 +111,8 @@ Reels.prototype = {
     _getDefaultOptions: function () {
         return {
             scene: null,
-            onReelsStart: () => { },
-            onReelsEnd: () => { },
+            onReelsStart: (slotIndex) => { },
+            onReelsEnd: (slotIndex) => { },
             x: 0,
             y: 0
         };

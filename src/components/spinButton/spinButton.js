@@ -1,9 +1,9 @@
 //Class Base Spin
 export default class BaseSpin {
-    constructor(deps, { scene, onClick, isPending }) {
+    constructor(deps, { scene, onClick }) {
         this.scene = scene;
         this._onClick = onClick;
-        this._isPending = isPending;
+        this._isPending = false;
         this._isPending || this._pending();
         const { globalOptions, SpriteAdapter, Config } = deps();
         this._globalOptions = globalOptions;
