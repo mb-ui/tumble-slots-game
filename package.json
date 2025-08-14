@@ -1,6 +1,6 @@
 {
   "name": "tumble-slots-game",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A Phaser 3 Project Example",
   "main": "src/index.js",
   "scripts": {
