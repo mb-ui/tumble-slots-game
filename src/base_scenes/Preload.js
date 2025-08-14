@@ -10,18 +10,17 @@ export default class PreloadScene extends Phaser.Scene {
         // load spritesheets
         this.load.spritesheet('explode', 'images/symbols/explode.png', { frameWidth: 291.71, frameHeight: 312, endFrame: 6 });
         // load spine        
-        // this.load.spineJson("sixMealMan", "spine/Six_Meal_character_A_HQ.json");
-        // this.load.spineAtlas("sixMealMan-atlas", "spine/Six_Meal_character_A_HQ.atlas");
-        this.load.spineJson("hero", "spine/hero/hero-pro.json");
-        this.load.spineAtlas("hero-atlas", "spine/hero/hero-pma.atlas");
+
+        this.load.spineJson("hero", "spine/heros/heroes.json");
+        this.load.spineAtlas("hero-atlas", "spine/heros/heroes.atlas");
         //load image
         this.load.atlas('logo', 'images/logo/logo.png', 'images/logo/logo.json');
         this.load.atlas('about', 'images/about/about.png', 'images/about/about.json');
-        this.load.atlas('background', 'images/bg/bg.png', 'images/bg/bg.json');
         this.load.atlas('bgPreload', 'images/bg/bgmenu.png', 'images/bg/bgmenu.json');
         this.load.atlas('bgButtons', 'images/buttons/button.png', 'images/buttons/button.json');
-        this.load.atlas('symbols', 'images/symbols/symbols.png', 'images/symbols/symbols.json');
-        this.load.atlas('symbols_blur', 'images/symbols/symbols_blur.png', 'images/symbols/symbols_blur.json');
+        this.load.image('prisonBg', 'images/bg/prison-bg.png');
+        this.load.image('prisonSkeleton', 'images/bg/prison-skeleton.png');
+        this.load.image('prison', 'images/bg/prison.jpg');
         this.load.atlas('sound', 'images/sound/sound.png', 'images/sound/sound.json');
         this.load.bitmapFont('txt_bitmap', 'fonts/bitmap/text_slot_machine.png', 'fonts/bitmap/text_slot_machine.xml');
         //load audio

@@ -1,3 +1,4 @@
+let flag = -1;
 export default class Slot extends Phaser.GameObjects.Container {
     /**
      * 
@@ -15,14 +16,13 @@ export default class Slot extends Phaser.GameObjects.Container {
         this.positionX = x;
         this._globalOptions = globalOptions;
         this._isFall = false;
-        this.symbolHeight = this._globalOptions.symbolHeight;
         this.options = Object.assign({},
             {
                 onFall: () => { },
                 order: 0,
                 columnIndex: 0,
                 imgName: '',
-                symbolX: this._globalOptions.slotWidth / 2,
+                symbolX: this._globalOptions.tableColumnWidth / 2,
                 symbolY: 0,
                 x: 0,
                 y: 0,
@@ -33,29 +33,53 @@ export default class Slot extends Phaser.GameObjects.Container {
         // add container
         scene.add.existing(this);
         this._flag = false;
-        this.width = this._globalOptions.slotWidth;
-        this.height = this._globalOptions.slotHeight;
+        this.width = this._globalOptions.tableColumnWidth;
+        this.height = this._globalOptions.tableHeight;
         this.setSize(this.width, this.height);
         // adding floor
-        this.floor = this._scene.physics.add.staticSprite(this.positionX, this.positionY + this._globalOptions.slotHeight, null);
-        this.floor.setSize(this._globalOptions.slotWidth, 1);
+        this.floor = this._scene.physics.add.staticSprite(this.positionX + this.width / 2, this.positionY + this._globalOptions.tableHeight, null);
+        this.floor.setSize(this._globalOptions.tableColumnWidth, 1);
         this.floor.visible = false;
         // add symbol
         this._setEnableFallDetection(true).addSymbol(this.options.imgName);
+
+        // const table = this._scene.add.graphics();
+        // table.lineStyle(2, 0xffd700, 1);
+        // table.strokeRect(3, 3, this.width - 6, this.height - 6);
+        // this.add(table);
+        // table.setDepth(5);
     }
     _setEnableFallDetection(value) {
         this.enableCollide = value;
         return this;
     }
     addSymbol(existingImgName) {
-        this.imgName = existingImgName || ('symbols_' + this._randomBetween(0, 9));
-        const symbol = this._scene.physics.add.sprite(this.options.symbolX, this.options.symbolY, 'symbols', this.imgName + '.png');
+        flag++;
+        const skin = ["Assassin", "Beardy", "Pamela-1", "Pamela-2", "Pamela-5", "Buck", "Chuck", "Stumpy", "Truck", "Young"];
+        console.log(`symbol ${flag} columnIndex : ${this.options.columnIndex} order : ${this.options.order}`);
+        const random = this._randomBetween(0, 9);
+        this.imgName = existingImgName || (skin[random]);
+        const symbol = this._scene.add.spine(this.options.symbolX, this.options.symbolY, "hero", "hero-atlas");
+        symbol.animationState.setAnimation(0, "idle", true);
+
+        symbol.skeleton.setSkinByName(this.imgName);
+        this._scene.physics.add.existing(symbol);
         symbol.name = this.imgName;
         this.add(symbol);
-        symbol.setCollideWorldBounds(false);
+
+
+
+        symbol.body.setCollideWorldBounds(false);
         symbol.body.setGravityY(this._globalOptions.symbolCollisionGravity);
         symbol.body.setBounce(this._globalOptions.symbolBounce);
-        this._scene.physics.add.collider(symbol, this.floor, (symbol) => {
+
+        symbol.setScale(this._globalOptions.symbolScale);
+        symbol.width = this._globalOptions.symbolOriginalWidth * this._globalOptions.symbolScale;
+        symbol.height = this._globalOptions.symbolOriginalHeight * this._globalOptions.symbolScale;
+
+
+        //this._scene.physics.world.debugGraphic.visible = true;
+        this._scene.physics.add.collider(symbol.body, this.floor, (symbol) => {
             if (!symbol.isCollid) {
                 this._onCollide();
             }
@@ -100,7 +124,7 @@ export default class Slot extends Phaser.GameObjects.Container {
             const symbol = this.symbol;
             const childMatrix = symbol.getWorldTransformMatrix();
             const worldY = childMatrix.ty;
-            if ((worldY > 0) && worldY > (this._globalOptions.slotsY + this._globalOptions.slotHeight + this._globalOptions.symbolHeight)) {
+            if ((worldY > 0) && worldY > (this._globalOptions.tableY + this._globalOptions.tableHeight + this._globalOptions.symbolOriginalHeight)) {
                 this.remove(symbol, true);
                 this.options.onFall(this);
             }

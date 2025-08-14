@@ -31,15 +31,15 @@ Slots.prototype = {
         }
     },
     _createSlot: function (columnIndex, order, op) {
-        const conX = this._globalOptions.slotsX + (columnIndex * this._globalOptions.slotWidth) + (columnIndex * this._globalOptions.slotGapY);
-        const conY = this._globalOptions.slotsY - (order * this._globalOptions.symbolHeight) - (order * this._globalOptions.slotsGapX);
+        const conX = this._globalOptions.tableX + (columnIndex * this._globalOptions.tableColumnWidth);
+        const conY = this._globalOptions.tableY - (order * this._globalOptions.tableRowHeight);
         const con = new this.Slot(this._scene, Object.assign(
             {
                 columnIndex,
                 order,
                 x: conX,
                 y: conY,
-                symbolX: this._globalOptions.slotWidth / 2,
+                symbolX: this._globalOptions.tableColumnWidth / 2,
                 symbolY: -10 * (order + 1),
                 onFall: (con) => this._onFall(con)
             },
@@ -53,13 +53,13 @@ Slots.prototype = {
         this.list.forEach(con => con.forEach((value, i) => callback(value, i)));
     },
     _createSlots: function (columnIndex = 0) {
-        Array.from({ length: this._globalOptions.slotFallCount }).map((value, i) => i).forEach((i) => this._createSlot(
+        Array.from({ length: this._globalOptions.fallenSlotsCountPerColumnAfterSpin }).map((value, i) => i).forEach((i) => this._createSlot(
             columnIndex,
             i,
             {
                 enableFallDetection: i === 0,
                 onCollide: () => {
-                    if (i === 0 && columnIndex === this._globalOptions.slotsCount - 1) {
+                    if (i === 0 && columnIndex === this._globalOptions.tableColumnCount - 1) {
                         if (!this._isReady) {
                             this._isReady = true;
                             this._onReady();
@@ -74,8 +74,8 @@ Slots.prototype = {
         ));
         setTimeout(() => {
             columnIndex++;
-            columnIndex <= this._globalOptions.slotsCount - 1 && this._createSlots(columnIndex);
-        }, this._globalOptions.slotsDelay)
+            columnIndex <= this._globalOptions.tableColumnCount - 1 && this._createSlots(columnIndex);
+        }, this._globalOptions.fallenSlotsDelayBetweenColumns)
     },
     /** fired when last container has fall */
     _onReady: function () {
@@ -87,14 +87,14 @@ Slots.prototype = {
     _onFall: function (con) {
         const { columnIndex, order } = con.options;
         this._pub_sub.trigger('onFall', undefined, () => [{ columnIndex, order }]);
-        if (columnIndex === this._globalOptions.slotsCount - 1 && order === this._globalOptions.slotFallCount - 1) {
+        if (columnIndex === this._globalOptions.tableColumnCount - 1 && order === this._globalOptions.fallenSlotsCountPerColumnAfterSpin - 1) {
             this.list.forEach(cons => cons.forEach(con => con.destroy()));
             this.list = [];
             this._createSlots();
         }
     },
     empty: function () {
-        this.list.forEach((cons, i) => setTimeout(() => { cons.forEach(con => con && con.empty()) }, i * 2 * this._globalOptions.slotsDelay))
+        this.list.forEach((cons, i) => setTimeout(() => { cons.forEach(con => con && con.empty()) }, i * 2 * this._globalOptions.fallenSlotsDelayBetweenColumns))
     },
     update: function () {
         this.list.forEach(cons => cons.forEach(con => con && con.update()));
@@ -107,15 +107,15 @@ Slots.prototype = {
                 this._tumble(
                     columnIndex,
                     cons.map((value, i) => ({ value, order: i }))
-                        .filter(({ value, order }) => value && (order < this._globalOptions.slotCapacity)),
-                    columnIndex == this._globalOptions.slotsCount - 1
+                        .filter(({ value, order }) => value && (order < this._globalOptions.tableRowCount)),
+                    columnIndex == this._globalOptions.tableColumnCount - 1
                 );
             }
         });
     },
     _tumble: function (columnIndex, remainedCells, enableFallDetection) {
         let outsideCellOrder = 0;
-        Array.from({ length: this._globalOptions.slotCapacity }).map((value, i) => i).forEach((i) => {
+        Array.from({ length: this._globalOptions.tableRowCount }).map((value, i) => i).forEach((i) => {
             const remainCell = remainedCells[i];
             if (remainCell) {
                 const con = this.list[columnIndex][remainCell.order];
@@ -127,7 +127,7 @@ Slots.prototype = {
                     con.destroy();
                     this._createSlot(columnIndex, i,
                         {
-                            symbolY: this._globalOptions.slotHeight - (oldOrder * this._globalOptions.symbolHeight) - ((oldOrder - 1) * this._globalOptions.slotsGapX),
+                            symbolY: this._globalOptions.tableHeight - (oldOrder * this._globalOptions.tableRowHeight),
                             imgName: existingImgName
                         }
                     );
@@ -136,10 +136,10 @@ Slots.prototype = {
                 outsideCellOrder++;
                 this._createSlot(columnIndex, i, {
                     symbolY: -10 * (outsideCellOrder + 1),
-                    enableFallDetection: enableFallDetection && i === this._globalOptions.slotCapacity - 1,
+                    enableFallDetection: enableFallDetection && i === this._globalOptions.tableRowCount - 1,
                     onCollide: () => {
                         setTimeout(() => {
-                            this._onCollide({ columnIndex, order: i }, i == this._globalOptions.slotCapacity - 1);
+                            this._onCollide({ columnIndex, order: i }, i == this._globalOptions.tableRowCount - 1);
                         }, 500)
                     }
                 });
