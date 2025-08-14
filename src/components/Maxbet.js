@@ -3,7 +3,7 @@ import Options from '../options';
 import Sprite from '../adapters/Sprite';
 //Class Maxbet
 export default class Maxbet {
-    constructor(scene) {
+    constructor({ scene }) {
         this.scene = scene;
         this.maxBet = new Sprite(this.scene, Config.width - 477, Config.height - 50, 'bgButtons', 'btn-maxbet.png');
         this.txtMaxBet = this.scene.add.dynamicBitmapText(Config.width - 550, Config.height - 70, 'txt_bitmap', Options.txtMaxBet, 38);
