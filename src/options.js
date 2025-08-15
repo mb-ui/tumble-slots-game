@@ -42,7 +42,7 @@ const Options = {
 	/**indicates how many hidden slots inside each reels there are */
 	reelsHiddenSlotsCount: 13,
 	/**delay to next reels for starting */
-	delayNextReelsStart: 300,
+	delayNextReelsStart: 400,
 	/**delay to next reels for ending */
 	delayNextReelsEnd: 100
 };

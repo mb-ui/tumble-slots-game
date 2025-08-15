@@ -35,13 +35,31 @@ export default class Slot extends Phaser.GameObjects.Container {
         this._floor = this.scene.physics.add.staticSprite(this.options.x + this.width / 2, this.options.y + this.height, null);
         this._floor.setSize(this.width, this._globalOptions.floorHeight);
         this._floor.visible = false;
-        this._symbolSkins = ["Assassin", "Beardy", "Pamela-1", "Pamela-2", "Pamela-5", "Buck", "Chuck", "Stumpy", "Truck", "Young"];
+        this._symbolSkins = [
+            { flashColor: 0Xa5eb53, skinName: "Assassin" },
+            { flashColor: 0XF44336, skinName: "Beardy" },
+            { flashColor: 0Xda73eb, skinName: "Pamela-1" },
+            { flashColor: 0X6cbfe5, skinName: "Pamela-2" },
+            { flashColor: 0X009688, skinName: "Pamela-5" },
+            { flashColor: 0X4caf50, skinName: "Buck" },
+            { flashColor: 0Xcddc39, skinName: "Chuck" },
+            { flashColor: 0Xcddc39, skinName: "Stumpy" },
+            { flashColor: 0Xffc107, skinName: "Truck" },
+            { flashColor: 0Xff9800, skinName: "Young" }
+        ];
         // add symbol
         this.addSymbol(this.options.imgName, this._randomBetween(0, 9));
         this.setDepth(-1);
     }
     addSymbol(existingImgName, randomNumber) {
-        this.imgName = existingImgName || (this._symbolSkins[randomNumber]);
+        if (existingImgName) {
+            this.imgName = existingImgName;
+            this._flashColor = this._symbolSkins.find(value => value.skinName == this.imgName).flashColor
+        } else {
+            const skin = this._symbolSkins[randomNumber];
+            this.imgName = skin.skinName;
+            this._flashColor = skin.flashColor;
+        }
         const symbol = this.scene.add.spine(this.options.symbolX, this.options.symbolY, "hero", "hero-atlas");
         symbol.animationState.setAnimation(0, "idle", true);
         symbol.skeleton.setSkinByName(this.imgName);
@@ -128,6 +146,29 @@ export default class Slot extends Phaser.GameObjects.Container {
         const animationSart = () => { this.destroy(); };
         const animationEnd = callback;
         this.symbol.alpha = 0.3;
-        this._explod.anim(x, y, animationSart, animationEnd);
+        this._flash(() => {
+            this._explod.anim(x, y, animationSart, animationEnd);
+        });
+    }
+    _flash(callback, duration = 150, paddingX = 10, paddingY = 5) {
+        const x = this.options.x + this.options.symbolX - (this.width / 2) + paddingX;
+        const y = this.options.y + this.height - this._globalOptions.slotHeight + paddingY;
+        const flashGraphics = this.scene.add.graphics();
+        flashGraphics.fillStyle(this._flashColor, 0.16);
+        flashGraphics.fillRect(x, y, this.width - (2 * paddingX), this._globalOptions.slotHeight - (2 * paddingY));
+        flashGraphics.setDepth(6);
+        this.scene.tweens.add({
+            targets: flashGraphics,
+            alpha: { from: 0, to: 1 }, // Fade in
+            ease: 'Linear',
+            duration: 150, // Duration of the fade-in
+            yoyo: true, // Fade out after fading in
+            repeat: duration / 50,
+            onComplete: () => {
+                flashGraphics.destroy();
+                callback();
+            }
+        });
+
     }
 }
