@@ -6,15 +6,13 @@ export default class BaseSpin {
         this._isPending = false;
         const { globalOptions, SpriteAdapter, Config } = deps();
         this._globalOptions = globalOptions;
-        this._SpinButton = new SpriteAdapter(this.scene, Config.width - 275, Config.height - 50, 'bgButtons', 'btn-spin.png');
-        this._txtSpin = this.scene.add.dynamicBitmapText(Config.width - 315, Config.height - 70, 'txt_bitmap', this._globalOptions.txtSpin, 38);
-        this._txtSpin.setDisplayCallback(this.scene.textCallback);
+        this._SpinButton = new SpriteAdapter(this.scene, Config.width - 175, Config.height - 60, 'spinButton');
+        this._SpinButton.setScale(1.5)
         this._SpinButton.on('pointerdown', (e) => { this._click(e); }, this);
-        this._SpinButton.on('pointerup', () => this._SpinButton.setScale(1));
+        this._SpinButton.on('pointerup', () => { });
     }
     _click(e) {
         if (this._isPending) { return }
-        this._SpinButton.setScale(0.9);
         this._onClick(e);
         this._pending();
     }

@@ -121,16 +121,10 @@ export default class GameScene extends Phaser.Scene {
         const audio = new Audio({ scene: this });
         eventsAdapter.on(eventsAdapter.eventsEnum.onButtonClick, function () { this.audioButton.play(); }, audio);
         eventsAdapter.on(eventsAdapter.eventsEnum.onReelsStart, function (reelsIndex, slotIndex) {
-            if (slotIndex == 0) {
-                this[`audioFall${reelsIndex}`].play();
-                //stop previous sound
-                slotIndex >= 1 && this[`audioFall${reelsIndex - 1}`].stop();
-            }
+            slotIndex == 0 && this[`audioFall${reelsIndex}`].play();
         }, audio);
         eventsAdapter.on(eventsAdapter.eventsEnum.onReelsEnd, function (reelsIndex, slotIndex) {
             slotIndex == 0 && this[`audioCollide${reelsIndex}`].play();
-            //stop previous sound
-            slotIndex >= 1 && this[`audioCollide${reelsIndex - 1}`].stop();
         }, audio);
         eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function () { this.audioWin.play(); }, audio);
         eventsAdapter.on(eventsAdapter.eventsEnum.onExplode, function () { this.audioExplode.play(); }, audio);
