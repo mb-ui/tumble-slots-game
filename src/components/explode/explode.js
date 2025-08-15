@@ -4,14 +4,13 @@ function Explode(scene) {
 }
 Explode.prototype = {
     /**
-     * @param {any} slot  
-     * @param {()=>void} onDestroy
+     * @param {number} x  
+     * @param {number} y
+     * @param {()=>void} animationSart
+     * @param {()=>void} animationEnd
      * */
-    explod: function (slot, onDestroy) {
-        slot.symbol.alpha = 0.3;
+    anim: function (x, y, animationSart, animationEnd) {
         setTimeout(() => {
-            const x = slot.positionX + slot.options.symbolX;
-            const y = slot.positionY + slot.height - (slot.symbol.height / 2);
             this.explode = this._scene.physics.add.staticSprite(x, y, 'explode');
             this.explode.setDepth(2);
             if (!this._scene.anims.exists('explode')) {
@@ -21,7 +20,7 @@ Explode.prototype = {
                     frames: this._scene.anims.generateFrameNumbers('explode')
                 });
             }
-            slot.destroy();
+            animationSart();
             this.explode.anims.play('explode', false);
             this._scene.tweens.add({
                 targets: this.explode,
@@ -30,7 +29,7 @@ Explode.prototype = {
                 ease: 'Linear', // Optional easing function
                 onComplete: () => {
                     this.explode.destroy();
-                    onDestroy();
+                    animationEnd();
                 }
             });
         }, 500);
