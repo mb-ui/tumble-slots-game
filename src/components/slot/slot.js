@@ -111,7 +111,7 @@ export default class Slot extends Phaser.GameObjects.Container {
             const symbol = this.symbol;
             const childMatrix = symbol.getWorldTransformMatrix();
             const worldY = childMatrix.ty;
-            if ((worldY > 0) && worldY > (this._globalOptions.machineY + this._globalOptions.machineHeight + this.symbol.height)) {
+            if ((worldY > 0) && worldY > (this._globalOptions.machineY + this._globalOptions.machineHeight + 1)) {
                 this._isFall = false;
                 this.remove(symbol, true);
                 this.options.onFall(this);

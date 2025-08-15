@@ -22,6 +22,8 @@ export default class GameScene extends Phaser.Scene {
         prison.setScale(Options.machineWidth / Config.width, Options.machineHeight / Config.height);
         const prisonSkeleton = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prisonSkeleton').setDepth(4);
         prisonSkeleton.setScale(Options.machineWidth / Config.width, Options.machineHeight / Config.height);
+        // Audio todo
+        this._createAudio();
         // Machine
         this._createMachine();
         //add bg image
@@ -43,8 +45,6 @@ export default class GameScene extends Phaser.Scene {
         this._createCreditBoard();
         //score Board
         this._createScoreBoard();
-        // Audio todo
-        //new Audio(this).createButton();
     }
     update(time) {
         // if (time > 30) {
@@ -78,7 +78,10 @@ export default class GameScene extends Phaser.Scene {
         eventsAdapter.on(eventsAdapter.eventsEnum.onReelsStart, function (reelsIndex, slotIndex) {
             //calling fillReels method only after starting of last reels
             //reels starting here means falling reels slots from the machine
-            if (reelsIndex === this._globalOptions.reelsCount - 1 && slotIndex === 0) { this.fillReels(); }
+            if (reelsIndex === Options.reelsCount - 1 && slotIndex === Options.reelsSlotsCount + Options.reelsHiddenSlotsCount - 1) {
+                //wait until last the symbol's body completly falls outside the machine
+                setTimeout(() => this.fillReels());
+            }
         }, machine);
         eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ winners }) { this.tumble(winners); }, machine);
     }
@@ -115,5 +118,23 @@ export default class GameScene extends Phaser.Scene {
         });
         eventsAdapter.on(eventsAdapter.eventsEnum.onSpinEnd, function (slotsInfo) { this.evaluate(slotsInfo); }, evaluation);
         eventsAdapter.on(eventsAdapter.eventsEnum.onTumbleEnd, function (slotsInfo) { this.evaluate(slotsInfo); }, evaluation);
+    }
+    _createAudio() {
+        const audio = new Audio({ scene: this });
+        eventsAdapter.on(eventsAdapter.eventsEnum.onButtonClick, function () { this.audioButton.play(); }, audio);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onReelsStart, function (reelsIndex, slotIndex) {
+            if (slotIndex == 0) {
+                this[`audioFall${reelsIndex}`].play();
+                //stop previous sound
+                slotIndex >= 1 && this[`audioFall${reelsIndex - 1}`].stop();
+            }
+        }, audio);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onReelsEnd, function (reelsIndex, slotIndex) {
+            slotIndex == 0 && this[`audioCollide${reelsIndex}`].play();
+            //stop previous sound
+            slotIndex >= 1 && this[`audioCollide${reelsIndex - 1}`].stop();
+        }, audio);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function () { this.audioWin.play(); }, audio);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onExplode, function () { this.audioExplode.play(); }, audio);
     }
 }
