@@ -71,7 +71,7 @@ export default class GameScene extends Phaser.Scene {
              * @param {{ reelsIndex, slotIndex }} destroyedSlotInfo 
              */
             onTumbleEnd: function () { eventsAdapter.emit(eventsAdapter.eventsEnum.onTumbleEnd, this.getSlots()); },
-            onExplod: function () { eventsAdapter.emit(eventsAdapter.eventsEnum.onExplode); }
+            onExplode: function () { eventsAdapter.emit(eventsAdapter.eventsEnum.onExplode); }
         });
         eventsAdapter.on(eventsAdapter.eventsEnum.onUpdate, function () { this.update(); }, machine);
         eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.emptyReels(); }, machine);
