@@ -3,7 +3,7 @@ const Options = {
 	bet: 50,
 	txtSpin: 'SPIN',
 	symbolCollisionGravity: 5000,
-	symbolFallGravity: 7500,
+	symbolFallGravity: 10000,
 	symbolBounce: 0,
 	txtMaxBet: 'MAXBET',
 	txtInfo: 'INFO',
@@ -25,6 +25,8 @@ const Options = {
 	symbolOriginalWidth: 620.96,
 	/**indicates symbol height percentage of slot */
 	symbolHeightPercentageBasedOnSlot: 110,
+	/**height of floor insdie each slot */
+	floorHeight: 15,
 	/** table height of machine  */
 	machineHeight: 453,
 	/** table width */
@@ -38,9 +40,11 @@ const Options = {
 	/**indicates number of reels */
 	reelsCount: 3,
 	/**indicates how many hidden slots inside each reels there are */
-	reelsHiddenSlotsCount: 7,
-	/**delay to next reels start */
-	delayNextReelsStart: 400
+	reelsHiddenSlotsCount: 6,
+	/**delay to next reels for starting */
+	delayNextReelsStart: 400,
+	/**delay to next reels for ending */
+	delayNextReelsEnd: 100
 };
 ////////////////////////////// these options are automaticlly calculated /////////////////////////////
 /**width of each reels */

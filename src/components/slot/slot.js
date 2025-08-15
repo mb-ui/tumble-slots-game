@@ -33,7 +33,7 @@ export default class Slot extends Phaser.GameObjects.Container {
         this.setSize(this.width, this.height);
         // create _floor
         this._floor = this.scene.physics.add.staticSprite(this.options.x + this.width / 2, this.options.y + this.height, null);
-        this._floor.setSize(this.width, 1);
+        this._floor.setSize(this.width, this._globalOptions.floorHeight);
         this._floor.visible = false;
         this._symbolSkins = ["Assassin", "Beardy", "Pamela-1", "Pamela-2", "Pamela-5", "Buck", "Chuck", "Stumpy", "Truck", "Young"];
         // add symbol
@@ -50,24 +50,29 @@ export default class Slot extends Phaser.GameObjects.Container {
         const symbol = this.scene.add.spine(this.options.symbolX, this.options.symbolY, "hero", "hero-atlas");
         symbol.animationState.setAnimation(0, "idle", true);
         symbol.skeleton.setSkinByName(this.imgName);
-        this.scene.physics.add.existing(symbol);
         symbol.name = this.imgName;
         this.add(symbol);
-        symbol.setDepth(-1)
-        symbol.body.setCollideWorldBounds(false);
-        symbol.body.setGravityY(this._globalOptions.symbolCollisionGravity);
-        symbol.body.setBounce(this._globalOptions.symbolBounce);
+        symbol.setDepth(-1);
         symbol.setScale(this._globalOptions.symbolScale);
         symbol.width = this._globalOptions.symbolOriginalWidth * this._globalOptions.symbolScale;
         symbol.height = this._globalOptions.symbolOriginalHeight * this._globalOptions.symbolScale;
         this.symbol = symbol;
-        /**detect collistion*/
-        this.scene.physics.add.collider(symbol.body, this._floor, (symbol) => {
-            if (!symbol.isCollided) {
-                this._vibrateAnim();
-            }
-            symbol.isCollided = true;
-        });
+        if (this.options.gravity > 0) {
+            this._setPhysicsToSymbol(this.options.gravity);
+            /**detect collistion*/
+            this.scene.physics.add.collider(symbol.body, this._floor, (symbol) => {
+                if (!symbol.isCollided) {
+                    this._vibrateAnim();
+                }
+                symbol.isCollided = true;
+            });
+        }
+    }
+    _setPhysicsToSymbol(gravity) {
+        this.scene.physics.add.existing(this.symbol);
+        this.symbol.body.setCollideWorldBounds(false);
+        this.symbol.body.setGravityY(gravity);
+        this.symbol.body.setBounce(this._globalOptions.symbolBounce);
     }
     _randomBetween(min, max) {
         return Phaser.Math.Between(min, max);
@@ -115,8 +120,8 @@ export default class Slot extends Phaser.GameObjects.Container {
     }
     fall() {
         this._isFall = true;
+        this._setPhysicsToSymbol(this._globalOptions.symbolFallGravity)
         this._floor.destroy();
-        this.symbol.body.setGravityY(this._globalOptions.symbolFallGravity);
     }
     destroy() {
         super.destroy();

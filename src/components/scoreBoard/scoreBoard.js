@@ -12,6 +12,7 @@ ScoreBoard.prototype = {
     },
     addScore: function (score) {
         this._currentScore = this._currentScore + score;
+        this._scene.txtWin && this._scene.txtWin.destroy();
         const width = this._setTextWidthWin(this._currentScore);
         this._scene.txtWin = this._scene.add.text(width, this._config.height - 130, 'WIN: ' + this._currentScore + ' $ ', {
             fontSize: '20px',

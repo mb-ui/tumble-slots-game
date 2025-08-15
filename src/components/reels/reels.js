@@ -11,7 +11,7 @@ function Reels(deps, options) {
 Reels.prototype = {
     /**it is only called for the first time during App lifecycle */
     _initalCreate: function () {
-        Array.from({ length: this._globalOptions.reelsSlotsCount }).map((value, i) => i)
+        Array.from({ length: this._globalOptions.reelsSlotsCount + this._globalOptions.reelsHiddenSlotsCount }).map((value, i) => i)
             .forEach(slotsIndex => {
                 this._slots[slotsIndex] = new this._SlotClass({
                     scene: this._scene,
@@ -21,7 +21,7 @@ Reels.prototype = {
                     gravity: 0,
                     onFall: () => { this._onFall(slotsIndex); },
                     imgName: '',
-                    symbolY: this._globalOptions.slotHeight / 2,
+                    symbolY: this._globalOptions.slotHeight - this._globalOptions.floorHeight,
                 });
             });
     },
@@ -35,7 +35,6 @@ Reels.prototype = {
             .forEach(slotIndex => this._createSlot(slotIndex, {
                 onCollide: () => this._options.onReelsEnd(slotIndex),
                 imgName: '',
-                symbolY: null,
             }));
     },
     /**
@@ -77,7 +76,7 @@ Reels.prototype = {
             } else {
                 outsideSlotOrder++;
                 this._createSlot(i, {
-                    symbolY: -10 * (outsideSlotOrder + 1),//todo (this._globalOptions.slotHeight*outsideSlotOrder should be replaced)
+                    symbolY: -(this._globalOptions.floorHeight) * outsideSlotOrder,
                     onCollide: () => callback()
                 });
             }

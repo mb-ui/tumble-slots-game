@@ -99,7 +99,7 @@ export default class GameScene extends Phaser.Scene {
     }
     _createScoreBoard() {
         const scoreBoard = new ScoreBoard({ scene: this });
-        eventsAdapter.on(eventsAdapter.eventsEnum.onLose, function () { this.clear(); }, scoreBoard);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.clear(); }, scoreBoard);
         eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ score }) { this.addScore(score); }, scoreBoard);
     }
     _evaluation() {

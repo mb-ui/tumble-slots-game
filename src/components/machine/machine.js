@@ -36,7 +36,7 @@ Machine.prototype = {
         if (reelsIndex <= this._globalOptions.reelsCount - 1) {
             this._reels[reelsIndex].fill();
             reelsIndex++;
-            setTimeout(() => { this.fillReels(reelsIndex); }, this._globalOptions.delayNextReelsStart);
+            setTimeout(() => { this.fillReels(reelsIndex); }, this._globalOptions.delayNextReelsEnd);
         }
     },
     /**calls reels.empty() based on delayNextReelsStart option */
