@@ -14,15 +14,11 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.spineJson("hero", "spine/heros/heroes.json");
         this.load.spineAtlas("hero-atlas", "spine/heros/heroes.atlas");
         //load image
-        this.load.atlas('logo', 'images/logo/logo.png', 'images/logo/logo.json');
-        this.load.atlas('about', 'images/about/about.png', 'images/about/about.json');
         this.load.atlas('bgPreload', 'images/bg/bgmenu.png', 'images/bg/bgmenu.json');
-        this.load.atlas('bgButtons', 'images/buttons/button.png', 'images/buttons/button.json');
+        this.load.image('spinButton', 'images/bg/spin.png');
         this.load.image('prisonBg', 'images/bg/prison-bg.png');
         this.load.image('prisonSkeleton', 'images/bg/prison-skeleton.png');
         this.load.image('prison', 'images/bg/prison.jpg');
-        this.load.atlas('sound', 'images/sound/sound.png', 'images/sound/sound.json');
-        this.load.bitmapFont('txt_bitmap', 'fonts/bitmap/text_slot_machine.png', 'fonts/bitmap/text_slot_machine.xml');
         //load audio
         this.load.audio('backgroundDefault', 'audio/background-default.mp3');
         this.load.audio('win', 'audio/win.mp3');
@@ -59,7 +55,7 @@ export default class PreloadScene extends Phaser.Scene {
     }
 
     create() {
-        this.scene.start('Boot');
+        this.scene.start('Game');
     }
 
 

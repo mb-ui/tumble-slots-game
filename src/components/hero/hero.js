@@ -1,7 +1,6 @@
 function Hero(deps, scene) {
     this._scene = scene;
     this.defaultAnim = 'idle';
-    const { pub_sub } = deps();
     this._hero = scene.add.spine(140, 580, "hero", "hero-atlas");
     // this._hero.animationStateData.setMix(this.defaultAnim, 'morningstar pose', 0.2);
     // this._hero.animationStateData.setMix('morningstar pose', this.defaultAnim, 0.2);

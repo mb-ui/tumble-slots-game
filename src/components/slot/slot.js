@@ -1,0 +1,174 @@
+export default class Slot extends Phaser.GameObjects.Container {
+    /**
+     * 
+     * @param {any} scene 
+     * @param {any} op options
+     * @param {{globalOptions}} deps 
+     */
+    constructor(deps, op) {
+        super(op.scene, op.x, op.y);
+        const { globalOptions, explod } = deps(op.scene)
+        this.scene = op.scene;
+        this._globalOptions = globalOptions;
+        this._isFall = false;
+        this._explod = explod;
+        this.options = Object.assign({},
+            {
+                scene: null,
+                imgName: '',
+                symbolX: this._globalOptions.reelsWidth / 2,
+                symbolY: 0,
+                x: 0,
+                y: 0,
+                gravity: 0,
+                height: 0,
+                onFall: () => { },
+                onCollide: () => { },
+            },
+            op);
+        // create container
+        op.scene.add.existing(this);
+        this.width = this._globalOptions.reelsWidth;
+        this.height = this.options.height;
+        this.setSize(this.width, this.height);
+        // create _floor
+        this._floor = this.scene.physics.add.staticSprite(this.options.x + this.width / 2, this.options.y + this.height, null);
+        this._floor.setSize(this.width, this._globalOptions.floorHeight);
+        this._floor.visible = false;
+        this._symbolSkins = [
+            { flashColor: 0Xa5eb53, skinName: "Assassin" },
+            { flashColor: 0XF44336, skinName: "Beardy" },
+            { flashColor: 0Xda73eb, skinName: "Pamela-1" },
+            { flashColor: 0X6cbfe5, skinName: "Pamela-2" },
+            { flashColor: 0X009688, skinName: "Pamela-5" },
+            { flashColor: 0X4caf50, skinName: "Buck" },
+            { flashColor: 0Xcddc39, skinName: "Chuck" },
+            { flashColor: 0Xcddc39, skinName: "Stumpy" },
+            { flashColor: 0Xffc107, skinName: "Truck" },
+            { flashColor: 0Xff9800, skinName: "Young" }
+        ];
+        // add symbol
+        this.addSymbol(this.options.imgName, this._randomBetween(0, 9));
+        this.setDepth(-1);
+    }
+    addSymbol(existingImgName, randomNumber) {
+        if (existingImgName) {
+            this.imgName = existingImgName;
+            this._flashColor = this._symbolSkins.find(value => value.skinName == this.imgName).flashColor
+        } else {
+            const skin = this._symbolSkins[randomNumber];
+            this.imgName = skin.skinName;
+            this._flashColor = skin.flashColor;
+        }
+        const symbol = this.scene.add.spine(this.options.symbolX, this.options.symbolY, "hero", "hero-atlas");
+        symbol.animationState.setAnimation(0, "idle", true);
+        symbol.skeleton.setSkinByName(this.imgName);
+        symbol.name = this.imgName;
+        this.add(symbol);
+        symbol.setDepth(-1);
+        symbol.setScale(this._globalOptions.symbolScale);
+        symbol.width = this._globalOptions.symbolOriginalWidth * this._globalOptions.symbolScale;
+        symbol.height = this._globalOptions.symbolOriginalHeight * this._globalOptions.symbolScale;
+        this.symbol = symbol;
+        if (this.options.gravity > 0) {
+            this._setPhysicsToSymbol(this.options.gravity);
+            /**detect collistion*/
+            this.scene.physics.add.collider(symbol.body, this._floor, (symbol) => {
+                if (!symbol.isCollided) {
+                    this._vibrateAnim();
+                }
+                symbol.isCollided = true;
+            });
+        }
+    }
+    _setPhysicsToSymbol(gravity) {
+        this.scene.physics.add.existing(this.symbol);
+        this.symbol.body.setCollideWorldBounds(false);
+        this.symbol.body.setGravityY(gravity);
+        this.symbol.body.setBounce(this._globalOptions.symbolBounce);
+    }
+    _randomBetween(min, max) {
+        return Phaser.Math.Between(min, max);
+    }
+    _vibrateAnim() {
+        if (!this._hasBounce) {
+            // create custom bounce effect for symbol
+            const initialY = this.symbol.y;
+
+            // Create a tween that makes the sprite vibrate
+            const vibrateTween = this.scene.tweens.add({
+                targets: this.symbol,
+                y: initialY - 10,  // Move up by 5 pixels
+                duration: 30,     // A very short duration for a fast movement
+                ease: 'Linear',   // A linear ease for a consistent vibration
+                yoyo: true,       // Move back down
+                repeat: -1        // Repeat indefinitely
+            });
+
+            // Create a timer event to stop the vibration after 1000ms (1 second)
+            this.scene.time.delayedCall(70, () => {
+                vibrateTween.stop();
+                // Reset the sprite's position to its original y value to ensure it's not
+                // left at an offset after the tween is stopped.
+                this.symbol.y = initialY;
+                setTimeout(() => {
+                    this.options.onCollide(this);
+                }, 200);
+            }, [], this);
+        }
+        this._hasBounce = true;
+    }
+    update() {
+        if (this._isFall == true) {
+            ///// remove symbol which is out of container
+            const symbol = this.symbol;
+            const childMatrix = symbol.getWorldTransformMatrix();
+            const worldY = childMatrix.ty;
+            if ((worldY > 0) && worldY > (this._globalOptions.machineY + this._globalOptions.machineHeight + 1)) {
+                this._isFall = false;
+                this.remove(symbol, true);
+                this.options.onFall(this);
+            }
+        }
+    }
+    fall() {
+        this._isFall = true;
+        this._setPhysicsToSymbol(this._globalOptions.symbolFallGravity)
+        this._floor.destroy();
+    }
+    destroy() {
+        super.destroy();
+    }
+    /**executes callback when animation is completed */
+    explode(callback) {
+        const x = this.options.x + this.options.symbolX;
+        const y = this.options.y + this.height - (this.symbol.height / 2);
+        const animationSart = () => { this.destroy(); };
+        const animationEnd = callback;
+        this.symbol.alpha = 0.3;
+        this._flash(() => {
+            this._explod.anim(x, y, animationSart, animationEnd);
+        });
+    }
+    _flash(callback, duration = 150, paddingX = 10, paddingY = 5) {
+        const x = this.options.x + this.options.symbolX - (this.width / 2) + paddingX;
+        const y = this.options.y + this.height - this._globalOptions.slotHeight + paddingY;
+        const flashGraphics = this.scene.add.graphics();
+        flashGraphics.fillStyle(this._flashColor, 0.16);
+        flashGraphics.fillRect(x, y, this.width - (2 * paddingX), this._globalOptions.slotHeight - (2 * paddingY));
+        flashGraphics.setDepth(6);
+        this.scene.tweens.add({
+            targets: flashGraphics,
+            alpha: { from: 0, to: 1 }, // Fade in
+            ease: 'Linear',
+            duration: 150, // Duration of the fade-in
+            yoyo: true, // Fade out after fading in
+            repeat: duration / 50,
+            onComplete: () => {
+                flashGraphics.destroy();
+                callback();
+            }
+        });
+
+    }
+}
