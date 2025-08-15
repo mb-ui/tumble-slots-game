@@ -10,6 +10,7 @@ import CreditBoard from '../components/creditBoard/creditBoard.factory';
 import ScoreBoard from '../components/scoreBoard/scoreBoard.factory';
 import Hero from '../components/hero/hero.factory';
 import eventsAdapter from '../adapters/eventsAdapter';
+import Evaluation from '../components/evaluation/evaluation.factory';
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'Game' });
@@ -44,6 +45,9 @@ export default class GameScene extends Phaser.Scene {
         new Hero(this);
         new Maxbet({ scene: this });
         //new PayTable(this);
+
+        //evalution action
+        this._evaluation();
         //spin button
         this._createSpinButton();
         //credit board
@@ -111,5 +115,19 @@ export default class GameScene extends Phaser.Scene {
         const scoreBoard = new ScoreBoard({ scene: this });
         eventsAdapter.on(eventsAdapter.eventsEnum.onLose, function () { this.clear(); }, scoreBoard);
         eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ score }) { this.addScore(score); }, scoreBoard);
+    }
+    _evaluation() {
+        const evaluation = new Evaluation({
+            scene: this,
+            onSuccess: ({ winners, score }) => {
+                eventsAdapter.emit(eventsAdapter.eventsEnum.onWin, { winners, score });
+            },
+            onFail: () => {
+                eventsAdapter.emit(eventsAdapter.eventsEnum.onLose);
+                eventsAdapter.emit(eventsAdapter.eventsEnum.onIdle);
+            }
+        });
+        eventsAdapter.on(eventsAdapter.eventsEnum.onSpinEnd, function (slotsInfo) { this.evaluate(slotsInfo); }, evaluation);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onTumpleEnd, function () { this.evaluate(slotsInfo); }, evaluation);
     }
 }

@@ -52,7 +52,7 @@ Machine.prototype = {
      * @param {Array<{ reelsIndex, slotIndex, imgName }>} winners 
      */
     tumble: function (winners) {
-        this._explodes(winners, () => this._tumble());
+        this._explodes(winners, () => this._tumble(winners));
     },
     _tumble: function (winners) {
         const winnersCopy = [...winners];
@@ -77,6 +77,10 @@ Machine.prototype = {
             });
         }
     },
+    /**
+     * 
+     * @return {Array<{reelsIndex,slotIndex,slot}>}
+     */
     getSlots: function () {
         return this._reels.reduce((ac, reels, reelsIndex) =>
             ac.concat(reels.getSlots().map(slot => ({ ...slot, reelsIndex }))), []);
