@@ -3,8 +3,7 @@ import Options from '../options';
 import Audio from '../components/audio/audio.factory';
 import Sprite from '../adapters/Sprite';
 import Machine from '../components/machine/machine.factory';
-import PayTable from '../components/payTable/payTable.factory';
-import Maxbet from '../components/Maxbet';
+import BetBoard from '../components/betBoard';
 import SpinButton from '../components/spinButton/spinButton.factory';
 import CreditBoard from '../components/creditBoard/creditBoard.factory';
 import ScoreBoard from '../components/scoreBoard/scoreBoard.factory';
@@ -34,9 +33,8 @@ export default class GameScene extends Phaser.Scene {
         background.displayHeight = this.scale.height;
         // add Hero
         new Hero(this);
-        new Maxbet({ scene: this });
-        //PayTable todo
-        //new PayTable(this);
+        //bet board
+        new BetBoard({ scene: this });
         //evalution action
         this._evaluation();
         //spin button
