@@ -24,28 +24,17 @@ export default class GameScene extends Phaser.Scene {
         prisonSkeleton.setScale(Options.machineWidth / Config.width, Options.machineHeight / Config.height);
         // Machine
         this._createMachine();
-
         //add bg image
         const background = new Sprite(this, 0, 0, 'prisonBg').setDepth(0);
         background.setScale(1);
         background.setOrigin(0, 0);
         background.displayWidth = this.scale.width;
         background.displayHeight = this.scale.height;
-
-        // const table = this.add.graphics();
-        // table.lineStyle(2, 0xFF0000, 1);
-        // table.strokeRect(
-        //     Options.machineX,
-        //     Options.machineY,
-        //     Options.machineWidth,
-        //     Options.machineHeight
-        // );
-        // table.setDepth(4);
-
+        // add Hero
         new Hero(this);
         new Maxbet({ scene: this });
+        //PayTable todo
         //new PayTable(this);
-
         //evalution action
         this._evaluation();
         //spin button
@@ -54,12 +43,12 @@ export default class GameScene extends Phaser.Scene {
         this._createCreditBoard();
         //score Board
         this._createScoreBoard();
-        // Audio
+        // Audio todo
         //new Audio(this).createButton();
     }
     update(time) {
         // if (time > 30) {
-        //     this.events.emit('onUpdate'); // Emit the event with data
+        //     this.events.emit('onUpdate'); // todo
         // }
         eventsAdapter.emit(eventsAdapter.eventsEnum.onUpdate);
     }

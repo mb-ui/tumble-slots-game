@@ -3,7 +3,7 @@ const Options = {
 	bet: 50,
 	txtSpin: 'SPIN',
 	symbolCollisionGravity: 5000,
-	symbolFallGravity: 10000,
+	symbolFallGravity: 7500,
 	symbolBounce: 0,
 	txtMaxBet: 'MAXBET',
 	txtInfo: 'INFO',
@@ -40,7 +40,7 @@ const Options = {
 	/**indicates how many hidden slots inside each reels there are */
 	reelsHiddenSlotsCount: 7,
 	/**delay to next reels start */
-	delayNextReelsStart: 100
+	delayNextReelsStart: 400
 };
 ////////////////////////////// these options are automaticlly calculated /////////////////////////////
 /**width of each reels */
