@@ -38,11 +38,6 @@ export default class Slot extends Phaser.GameObjects.Container {
         this._symbolSkins = ["Assassin", "Beardy", "Pamela-1", "Pamela-2", "Pamela-5", "Buck", "Chuck", "Stumpy", "Truck", "Young"];
         // add symbol
         this.addSymbol(this.options.imgName, this._randomBetween(0, 9));
-        // const table = this.scene.add.graphics();
-        // table.lineStyle(2, 0xffd700, 1);
-        // table.strokeRect(3, 3, this.width - 6, this.height - 6);
-        // this.add(table);
-        // table.setDepth(5);
         this.setDepth(-1);
     }
     addSymbol(existingImgName, randomNumber) {
