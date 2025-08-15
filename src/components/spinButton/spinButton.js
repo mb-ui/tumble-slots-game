@@ -4,7 +4,6 @@ export default class BaseSpin {
         this.scene = scene;
         this._onClick = onClick;
         this._isPending = false;
-        this._isPending || this._pending();
         const { globalOptions, SpriteAdapter, Config } = deps();
         this._globalOptions = globalOptions;
         this._SpinButton = new SpriteAdapter(this.scene, Config.width - 275, Config.height - 50, 'bgButtons', 'btn-spin.png');

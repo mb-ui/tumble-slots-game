@@ -1,8 +1,9 @@
 function Reels(deps, options) {
-    const { globalOptions, Config, SlotsClass } = deps();
+    const { globalOptions, Config, SlotClass } = deps();
     this._globalOptions = globalOptions;
     this._config = Config;
-    this._SlotClass = SlotsClass;
+    this._SlotClass = SlotClass;
+    this._scene = options.scene;
     this._options = Object.assign(this._getDefaultOptions(), options);
     this._slots = [];
     this._initalCreate();
@@ -10,12 +11,12 @@ function Reels(deps, options) {
 Reels.prototype = {
     /**it is only called for the first time during App lifecycle */
     _initalCreate: function () {
-        Array.from({ length: this._options.reelsSlotsCount }).map(i => i)
+        Array.from({ length: this._globalOptions.reelsSlotsCount }).map((value, i) => i)
             .forEach(slotsIndex => {
                 this._slots[slotsIndex] = new this._SlotClass({
-                    scene: this._options.scene,
+                    scene: this._scene,
                     x: this._options.x,
-                    y: this._options.y + this._options.machineHeight - (order * this._globalOptions.slotHeight),
+                    y: this._options.y + this._globalOptions.machineHeight - ((slotsIndex + 1) * this._globalOptions.slotHeight),
                     height: this._globalOptions.slotHeight,
                     gravity: 0,
                     onFall: () => { this._onFall(slotsIndex); },
@@ -26,11 +27,11 @@ Reels.prototype = {
     },
     /**falls all slots makes their giving onFall options to be triggerd  */
     empty: function () {
-        this._slots.forEach(slot => slot.setGravity(this._options.symbolFallGravity).fall());
+        this._slots.forEach(slot => slot.fall());
     },
     /**creates all slots for the reels and indirectly makes the onReelsEnd event to trigger */
     fill: function () {
-        Array.from({ length: this._options.reelsSlotsCount + this._options.reelsHiddenSlotsCount }).map(i => i)
+        Array.from({ length: this._globalOptions.reelsSlotsCount + this._globalOptions.reelsHiddenSlotsCount }).map((value, i) => i)
             .forEach(slotIndex => this._createSlot(slotIndex, {
                 onCollide: () => this._options.onReelsEnd(slotIndex),
                 imgName: '',
@@ -100,12 +101,12 @@ Reels.prototype = {
     },
     _createSlot: function (slotsIndex, options) {
         this._slots[slotsIndex] = new this._SlotClass(Object.assign({
-            scene: this._options.scene,
+            scene: this._scene,
             x: this._options.x,
-            y: this._options.y - (order * this._globalOptions.slotHeight),
+            y: this._options.y - (slotsIndex * this._globalOptions.slotHeight),
             onFall: () => { this._onFall(slotsIndex); },
-            gravity: this._options.symbolCollisionGravity,
-            height: this._options.machineHeight,
+            gravity: this._globalOptions.symbolCollisionGravity,
+            height: this._globalOptions.machineHeight,
         }, options));
     },
     _getDefaultOptions: function () {
@@ -121,7 +122,7 @@ Reels.prototype = {
         return this._slots.map((slot, slotIndex) => ({ ...slot, slotIndex }));
     },
     update: function () {
-        this._slots.forEach(slot => slot.update());
+        this._slots.forEach(slot => slot && slot.update());
     }
 
 };

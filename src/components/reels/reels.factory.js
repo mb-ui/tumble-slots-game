@@ -1,8 +1,7 @@
 import globalOptions from '../../options';
 import Config from '../../config';
-import SpriteAdapter from '../../adapters/Sprite';
 import Reels from './reels';
-import SlotClass from '../slot/slot.factory';
+import SlotClass from '../slot/slot.factory.js';
 export default Reels.bind(undefined, (scene) => ({
     globalOptions,
     Config,

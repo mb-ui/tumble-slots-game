@@ -17,7 +17,7 @@ export default class GameScene extends Phaser.Scene {
 
     create() {
         //add image machine
-        const prison = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prison').setDepth(-1);
+        const prison = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prison').setDepth(-2);
         prison.setScale(Options.machineWidth / Config.width, Options.machineHeight / Config.height);
         const prisonSkeleton = new Sprite(this, Config.width / 2 + 8, Config.height / 2 + 30, 'prisonSkeleton').setDepth(4);
         prisonSkeleton.setScale(Options.machineWidth / Config.width, Options.machineHeight / Config.height);
@@ -43,7 +43,7 @@ export default class GameScene extends Phaser.Scene {
 
         new Hero(this);
         new Maxbet({ scene: this });
-        new PayTable(this);
+        //new PayTable(this);
         //spin button
         this._createSpinButton();
         //credit board
@@ -51,21 +51,24 @@ export default class GameScene extends Phaser.Scene {
         //score Board
         this._createScoreBoard();
         // Audio
-        new Audio(this).createButton();
+        //new Audio(this).createButton();
     }
-    update() {
-        this.machine.update();
+    update(time) {
+        // if (time > 30) {
+        //     this.events.emit('onUpdate'); // Emit the event with data
+        // }
+        eventsAdapter.emit(eventsAdapter.eventsEnum.onUpdate);
     }
     _createMachine() {
         const machine = new Machine({
             scene: this,
             /**reels start means falling reels slots from the machin */
-            onReelsStart: (reelsIndex) => {
-                eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsStart, reelsIndex);
+            onReelsStart: (reelsIndex, slotIndex) => {
+                eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsStart, reelsIndex, slotIndex);
             },
             /**reels end means collide reels slots with buttom of machin */
-            onReelsEnd: function (reelsIndex) {
-                eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsEnd, reelsIndex);
+            onReelsEnd: function (reelsIndex, slotIndex) {
+                eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsEnd, reelsIndex, slotIndex);
                 // check if the last Reels is ended then trigger onSpinEnd
                 reelsIndex == Options.reelsCount - 1 &&
                     eventsAdapter.emit(eventsAdapter.eventsEnum.onSpinEnd, this.getSlots());
@@ -80,6 +83,7 @@ export default class GameScene extends Phaser.Scene {
             },
             onExplod: function () { eventsAdapter.emit(eventsAdapter.eventsEnum.onExplode); }
         });
+        eventsAdapter.on(eventsAdapter.eventsEnum.onUpdate, function () { this.update(); }, machine);
         eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.emptyReels(); }, machine);
         eventsAdapter.on(eventsAdapter.eventsEnum.onReelsStart, function (reelsIndex, slotIndex) {
             //calling fillReels method only after starting of last reels
@@ -99,7 +103,7 @@ export default class GameScene extends Phaser.Scene {
         eventsAdapter.on(eventsAdapter.eventsEnum.onIdle, function () { this.ready(); }, spinButton);
     }
     _createCreditBoard() {
-        const creditBoard = new CreditBoard({ scent: this });
+        const creditBoard = new CreditBoard({ scene: this });
         eventsAdapter.on(eventsAdapter.eventsEnum.onSpinStart, function () { this.bet(); }, creditBoard);
         eventsAdapter.on(eventsAdapter.eventsEnum.onWin, function ({ score }) { this.win(score); }, creditBoard);
     }

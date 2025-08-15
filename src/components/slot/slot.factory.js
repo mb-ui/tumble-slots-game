@@ -1,7 +1,7 @@
 import globalOptions from '../../options';
 import Config from '../../config.js';
 import Slot from './slot';
-import Explode from '../explode/explod.js';
+import Explode from '../explode/explode.js';
 import SpriteAdapter from '../../adapters/Sprite.js';
 /**
  * @param {any} scene

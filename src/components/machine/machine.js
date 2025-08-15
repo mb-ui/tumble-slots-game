@@ -3,6 +3,7 @@ function Machine(deps, options) {
     this._globalOptions = globalOptions;
     this._config = Config;
     this._ReelsClass = ReelsClass;
+    this._scene = options.scene;
     this._options = Object.assign(this._getDefaultOptions(), options);
     this.ready = false;
     this._reels = [];
@@ -20,11 +21,11 @@ Machine.prototype = {
     },
     /**_init method only executed once at initally and create reels instances */
     _init: function () {
-        Array.from({ length: this._options.reelsCount }).map(i => i).forEach(reelsIndex => {
+        Array.from({ length: this._globalOptions.reelsCount }).map((value, i) => i).forEach(reelsIndex => {
             this._reels[reelsIndex] = new this._ReelsClass({
-                scene: this._options.scene,
+                scene: this._scene,
                 onReelsStart: (slotIndex) => this._options.onReelsStart(reelsIndex, slotIndex),
-                onReelsEnd: (slotIndex) => this._options.onReelsEnd(reelsIndex, slotIndex),
+                onReelsEnd: (slotIndex) => this._options.onReelsEnd.call(this, reelsIndex, slotIndex),
                 y: this._globalOptions.machineY,
                 x: this._globalOptions.machineX + (reelsIndex * this._globalOptions.reelsWidth)
             });
