@@ -45,6 +45,5 @@ export class EventBus extends Phaser.Events.EventEmitter {
     }
 }
 const EventsAdapter = new EventBus(fsmAdapter);
-tsAdapter.eventsEnum.onTumpleEnd, function () { this.fsm.tumbleComplete(); }, EventsAdapter);
 
 export default EventsAdapter;
