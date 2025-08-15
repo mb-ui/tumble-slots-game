@@ -15,7 +15,7 @@ Machine.prototype = {
             scene: null,
             onReelsStart: (reelsIndex, slotIndex) => { },
             onReelsEnd: (reelsIndex, slotIndex) => { },
-            onTumple: () => { },
+            onTumbleEnd: () => { },
             onExplode: () => { }
         };
     },
@@ -55,10 +55,14 @@ Machine.prototype = {
         this._explodes(winners, () => this._tumble(winners));
     },
     _tumble: function (winners) {
-        const winnersCopy = [...winners];
+        /**reelsIndexes which its tumbling is ended */
+        const tumbledReels = [];
         //loop on reels and call each reels[reelsIndex].tumble with callback
         this._reels.forEach((reels, reelsIndex) => {
-            reels.tumble((slotIndex) => this._options.onTumple(winnersCopy, { slotIndex, reelsIndex }));
+            reels.tumble(() => {
+                tumbledReels.indexOf(reelsIndex) === -1 && tumbledReels.push(reelsIndex);
+                tumbledReels.length === this._globalOptions.reelsCount && this._options.onTumbleEnd.call(this);
+            });
         });
     },
     /**

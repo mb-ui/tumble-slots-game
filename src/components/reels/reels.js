@@ -39,9 +39,9 @@ Reels.prototype = {
             }));
     },
     /**
-     * @param {(slotIndex)=>void} callback 
+     * @param {(slotIndex)=>void} callback executed when tumbling of reels is end
      */
-    tumple: function (callback) {
+    tumble: function (callback) {
         //first check if the reels need tumble or not
         const needTumble = this._slots.some((slot) => slot == null);//perviously when slot is exploded, it is set to null
         if (needTumble) {
@@ -50,12 +50,12 @@ Reels.prototype = {
                 .filter(({ slot, slotIndex }) => slot && (slotIndex < this._globalOptions.reelsSlotsCount));
             this._tumble(remainedSlots, callback);
         } else {
-            //the callback only executed when there is a tumble, so here we do not anythings
+            callback();//end tumbling
         }
     },
     /**
      * @param {Array<{slot,slotIndex}>}  remainedSlots
-     * @param {(slotIndex)=>void} callback 
+     * @param {(slotIndex)=>void} callback executed when tumbling of reels is end
      */
     _tumble: function (remainedSlots, callback) {
         let outsideSlotOrder = 0;
@@ -78,7 +78,7 @@ Reels.prototype = {
                 outsideSlotOrder++;
                 this._createSlot(i, {
                     symbolY: -10 * (outsideSlotOrder + 1),//todo (this._globalOptions.slotHeight*outsideSlotOrder should be replaced)
-                    onCollide: () => setTimeout(() => callback(i), 500/**todo */)
+                    onCollide: () => callback()
                 });
             }
         });

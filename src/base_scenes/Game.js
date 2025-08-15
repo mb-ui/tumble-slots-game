@@ -73,18 +73,15 @@ export default class GameScene extends Phaser.Scene {
             /**reels end means collide reels slots with buttom of machin */
             onReelsEnd: function (reelsIndex, slotIndex) {
                 eventsAdapter.emit(eventsAdapter.eventsEnum.onReelsEnd, reelsIndex, slotIndex);
-                // check if the last Reels is ended then trigger onSpinEnd
-                reelsIndex == Options.reelsCount - 1 &&
+                // check if the last slot in last Reels is ended then trigger onSpinEnd
+                reelsIndex == Options.reelsCount - 1 && slotIndex == Options.reelsSlotsCount - 1 &&
                     eventsAdapter.emit(eventsAdapter.eventsEnum.onSpinEnd, this.getSlots());
             },
             /**
              * @param {Array<{ reelsIndex, slotIndex }>} winners 
              * @param {{ reelsIndex, slotIndex }} destroyedSlotInfo 
              */
-            onTumple: function (winners, destroyedSlotInfo) {
-                const lastWinner = winners[winners.length - 1];
-                JSON.stringify(lastWinner) === JSON.stringify(destroyedSlotInfo) && eventsAdapter.emit(eventsAdapter.eventsEnum.onTumpleEnd, this.getSlots());
-            },
+            onTumbleEnd: function () { eventsAdapter.emit(eventsAdapter.eventsEnum.onTumbleEnd, this.getSlots()); },
             onExplod: function () { eventsAdapter.emit(eventsAdapter.eventsEnum.onExplode); }
         });
         eventsAdapter.on(eventsAdapter.eventsEnum.onUpdate, function () { this.update(); }, machine);
@@ -128,6 +125,6 @@ export default class GameScene extends Phaser.Scene {
             }
         });
         eventsAdapter.on(eventsAdapter.eventsEnum.onSpinEnd, function (slotsInfo) { this.evaluate(slotsInfo); }, evaluation);
-        eventsAdapter.on(eventsAdapter.eventsEnum.onTumpleEnd, function () { this.evaluate(slotsInfo); }, evaluation);
+        eventsAdapter.on(eventsAdapter.eventsEnum.onTumbleEnd, function (slotsInfo) { this.evaluate(slotsInfo); }, evaluation);
     }
 }
