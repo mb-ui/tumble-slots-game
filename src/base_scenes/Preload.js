@@ -14,7 +14,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.spineJson("hero", "spine/heros/heroes.json");
         this.load.spineAtlas("hero-atlas", "spine/heros/heroes.atlas");
         //load image
-        this.load.atlas('bgPreload', 'images/bg/bgmenu.png', 'images/bg/bgmenu.json');
+        //this.load.atlas('bgPreload', 'images/bg/bgmenu.png', 'images/bg/bgmenu.json');
         this.load.image('spinButton', 'images/bg/spin.png');
         this.load.image('prisonBg', 'images/bg/prison-bg.png');
         this.load.image('prisonSkeleton', 'images/bg/prison-skeleton.png');
@@ -49,9 +49,6 @@ export default class PreloadScene extends Phaser.Scene {
             this.loadingText.setText(parseInt(value * 100) + '%');
         });
         this.load.on('complete', this.onComplete, this);
-        for (let i = 0; i < 100; i++) {
-            this.load.atlas('background' + i, 'images/bg/bg.png', 'images/bg/bg.json');
-        }
     }
 
     create() {
